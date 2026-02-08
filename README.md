@@ -1,167 +1,113 @@
 # refund-returns-agent
 
-Portfolio-grade, end-to-end Refund/Returns Agent:
-- Structured extraction from support messages
-- Tool calling for order lookup, policy checks, refund computation, RMA + label creation, escalation
-- Deterministic policy engine for synthetic labels/rewards
-- SFT + DPO training pipeline
-- Evaluation + safety suite + UI
+Generic, policy-grounded Refund/Returns Agent portfolio project.
 
-## Current status
-Checkpoint 1 scaffold is implemented:
-- Python project + lint/test tooling
-- Docker Compose with Postgres + FastAPI tool server
-- Strict JSON-schema-like Pydantic tool interfaces
-- Idempotent mutation tools + call tracing/logging
+It includes:
+- data pipeline from public datasets
+- deterministic policy engine for labels/rewards
+- tool-based support backend (FastAPI + Postgres)
+- guarded agent orchestration
+- SFT + DPO training pipelines
+- evaluation + safety suite
+- Streamlit UI
+- Docker Compose local stack + GitHub Actions CI
 
-Checkpoint 2 dataset pipeline is implemented:
-- Twitter/TweetSumm preprocessing into normalized JSONL
-- Olist join + deterministic policy labels for synthetic cases
-- Train/val/test split JSONL generation
-- DPO preference pair generation from deterministic policy outcomes
+## Architecture
+```text
+Customer/UI (Streamlit)
+        |
+        v
+Agent Server (FastAPI)
+  - guardrails (injection/fraud/exfiltration)
+  - tool orchestration
+  - customer reply + internal summary
+        |
+        v
+Tool Server (FastAPI)
+  - lookup_order
+  - get_policy
+  - check_eligibility
+  - compute_refund
+  - create_return
+  - create_label
+  - create_escalation
+        |
+        v
+Postgres
+  - orders, returns, labels, escalations
+  - tool_call_logs
 
-Checkpoint 3 agent orchestration is implemented:
-- FastAPI `agent_server` with safe tool orchestration
-- Guardrails: prompt-injection/fraud-exfil refusal + missing-info behavior
-- Policy-authoritative decisions (no invalid refund writes)
-- Internal case summary + next-action plan output
-
-Checkpoint 4 evaluation is implemented:
-- Offline eval harness (decision correctness + tool validity/sequence/efficiency)
-- Safety/adversarial suite (injection, fraud, exfiltration, PII leakage checks)
-- Human evaluation protocol + rubric for 25-case review
-
-Checkpoint 5 SFT training is implemented:
-- Deterministic SFT data formatting from synthetic cases + TweetSumm
-- QLoRA training script with model presets and swap support
-- LoRA adapter export/merge script
-
-Checkpoint 6 DPO training is implemented:
-- DPO preference formatting from synthetic preference pairs
-- `--prepare-only` mode for local CPU/macOS validation
-- CUDA DPO training path with optional warm-start from SFT adapter
-
-Checkpoint 7 UI is implemented:
-- Streamlit UI for customer case submission
-- Agent output view (customer reply + internal summary + action plan)
-- Tool trace table
-- Eval/safety report viewer
-
-## Quickstart
-1. Create env file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Start services:
-   ```bash
-   docker compose up --build
-   ```
-3. Health check:
-   ```bash
-   curl http://localhost:8001/health
-   curl http://localhost:8002/health
-   ```
-
-## Repo layout
+Offline ML
+  raw datasets -> preprocess/build synthetic -> SFT prep/train -> DPO prep/train
+                                  |
+                                  v
+                           eval harness + safety suite
 ```
+
+## Repository Layout
+```text
 refund-returns-agent/
   services/
     tool_server/
     agent_server/
     ui/
-  data/
-    raw/
-    processed/
   pipelines/
   training/
   eval/
   infra/db/
+  data/
+    raw/        # gitignored
+    processed/  # generated artifacts
   tests/
+  .github/workflows/
 ```
 
-## Checkpoint 2 data pipeline
-Expected raw dataset placement:
-- `data/raw/olist/olist_orders_dataset.csv`
-- `data/raw/olist/olist_order_items_dataset.csv`
-- `data/raw/olist/olist_customers_dataset.csv`
-- `data/raw/olist/olist_order_payments_dataset.csv`
-- `data/raw/twitter/twcs.csv` (optional but recommended)
-- `data/raw/tweetsumm/*.jsonl|*.csv` (optional)
+## Local Setup
+Requirements:
+- Python 3.11+
+- Docker + Docker Compose
+- (Optional) CUDA GPU host for full SFT/DPO training
 
-Run preprocessing:
+Install:
 ```bash
-python3 pipelines/preprocess_text.py --raw-dir data/raw --processed-dir data/processed --max-rows 200000
+cd "/Users/raksh/Desktop/Refund Returns Agent"
+python3 -m pip install -e '.[dev]'
+cp .env.example .env
 ```
 
-Build synthetic dataset:
-```bash
-python3 pipelines/build_dataset.py --raw-dir data/raw --processed-dir data/processed --max-cases 5000 --seed 42
-```
-
-Outputs:
-- `data/processed/twitter_support_texts.jsonl`
-- `data/processed/tweetsumm_pairs.jsonl` (if TweetSumm files are present)
-- `data/processed/synthetic_cases_train.jsonl`
-- `data/processed/synthetic_cases_val.jsonl`
-- `data/processed/synthetic_cases_test.jsonl`
-- `data/processed/dpo_pairs_train.jsonl`
-
-## Checkpoint 3 agent server
 Run stack:
 ```bash
 docker compose up --build
 ```
 
-Agent inference request:
+Health checks:
 ```bash
-curl -X POST http://localhost:8002/agent/respond \\
-  -H \"Content-Type: application/json\" \\
-  -d '{
-    \"case_id\": \"CASE-DEMO-1\",
-    \"customer_message\": \"My item arrived damaged. Please refund order ORD-1001.\",
-    \"order_id\": \"ORD-1001\"
-  }'
+curl http://localhost:8001/health
+curl http://localhost:8002/health
 ```
 
-Expected behavior:
-- Runs allowlisted tool sequence only.
-- If policy says not eligible: denies, no `create_return/create_label` calls.
-- If missing evidence: asks for required info, no write tools.
-- Fraud/exfiltration prompts: refusal with no tool calls.
+UI:
+- `http://localhost:8501`
 
-## Checkpoint 4 evaluation
-Run offline eval (requires `agent_server` running):
+## Public Data Ingestion
+Place datasets under:
+- `data/raw/olist/`
+- `data/raw/twitter/`
+- `data/raw/tweetsumm/`
+
+Pipeline commands:
 ```bash
-python3 eval/eval_harness.py \
-  --dataset data/processed/synthetic_cases_test.jsonl \
-  --agent-url http://localhost:8002 \
-  --limit 200 \
-  --output eval/results/eval_report.json
+python3 pipelines/preprocess_text.py --raw-dir data/raw --processed-dir data/processed --max-rows 200000
+python3 pipelines/build_dataset.py --raw-dir data/raw --processed-dir data/processed --max-cases 5000 --seed 42
 ```
 
-Run safety suite:
-```bash
-python3 eval/safety_suite.py \
-  --agent-url http://localhost:8002 \
-  --output eval/results/safety_report.json
-```
-
-Expected outputs:
-- `eval/results/eval_report.json` with:
-  - `decision_accuracy`
-  - `tool_validity_rate`
-  - `sequence_correct_rate`
-  - `efficiency_rate`
-  - `avg_calls_per_episode`
-- `eval/results/safety_report.json` with per-case pass/fail and pass rate.
-
-## Checkpoint 5 SFT (QLoRA)
+## Training
 Install training extras:
 ```bash
 python3 -m pip install -e '.[train]'
 ```
 
-Prepare SFT datasets only:
+SFT prepare-only:
 ```bash
 python3 training/sft_train.py \
   --prepare-only \
@@ -172,32 +118,17 @@ python3 training/sft_train.py \
   --prepared-val data/processed/sft_val_prepared.jsonl
 ```
 
-Run QLoRA SFT (CUDA host):
+SFT QLoRA (CUDA host):
 ```bash
 python3 training/sft_train.py \
   --model mistral-7b-instruct-v0.2 \
   --train-cases data/processed/synthetic_cases_train.jsonl \
   --val-cases data/processed/synthetic_cases_val.jsonl \
   --tweetsumm data/processed/tweetsumm_pairs.jsonl \
-  --output-dir models/sft_qlora \
-  --batch-size 1 \
-  --grad-accum 16 \
-  --learning-rate 2e-4 \
-  --num-epochs 1 \
-  --max-seq-len 1024
+  --output-dir models/sft_qlora
 ```
 
-Export merged model:
-```bash
-python3 training/export_model.py \
-  --base-model mistralai/Mistral-7B-Instruct-v0.2 \
-  --adapter-dir models/sft_qlora/adapter \
-  --output-dir models/sft_merged
-```
-Note: `models/sft_qlora/adapter` is created only after successful CUDA-based SFT training.
-
-## Checkpoint 6 DPO
-Prepare DPO datasets only:
+DPO prepare-only:
 ```bash
 python3 training/dpo_train.py \
   --prepare-only \
@@ -206,51 +137,94 @@ python3 training/dpo_train.py \
   --prepared-val data/processed/dpo_val_prepared.jsonl
 ```
 
-Run DPO (CUDA host):
+DPO (CUDA host):
 ```bash
 python3 training/dpo_train.py \
   --model mistral-7b-instruct-v0.2 \
   --train-pairs data/processed/dpo_pairs_train.jsonl \
   --output-dir models/dpo_qlora \
-  --adapter-init-dir models/sft_qlora/adapter \
-  --batch-size 1 \
-  --grad-accum 16 \
-  --learning-rate 5e-6 \
-  --num-epochs 1 \
-  --max-length 1024 \
-  --max-prompt-length 512 \
-  --beta 0.1
+  --adapter-init-dir models/sft_qlora/adapter
 ```
 
-Expected outputs:
-- `data/processed/dpo_train_prepared.jsonl`
-- `data/processed/dpo_val_prepared.jsonl`
-- `models/dpo_qlora/adapter` (only when CUDA training succeeds)
-
-## Checkpoint 7 Streamlit UI
-Run locally:
+Model export (requires successful SFT adapter):
 ```bash
-streamlit run services/ui/app.py --server.address 0.0.0.0 --server.port 8501
+python3 training/export_model.py \
+  --base-model mistralai/Mistral-7B-Instruct-v0.2 \
+  --adapter-dir models/sft_qlora/adapter \
+  --output-dir models/sft_merged
 ```
-If needed, set:
+
+## Evaluation
+Offline eval harness:
 ```bash
-export AGENT_SERVER_URL=http://localhost:8002
+python3 eval/eval_harness.py \
+  --dataset data/processed/synthetic_cases_test.jsonl \
+  --agent-url http://localhost:8002 \
+  --limit 200 \
+  --output eval/results/eval_report.json
 ```
 
-Or run full stack with Docker:
+Safety suite:
 ```bash
-docker compose up --build
+python3 eval/safety_suite.py \
+  --agent-url http://localhost:8002 \
+  --output eval/results/safety_report.json
 ```
 
-Open:
-- `http://localhost:8501`
+Human eval rubric:
+- `eval/human_eval.md`
 
-Expected UI behavior:
-- Submit case form with message + identifiers + attachment metadata.
-- Calls `agent_server` and displays:
-  - customer reply
-  - internal case summary
-  - next action plan
-  - final action
-  - tool trace dataframe
-- Right panel displays `eval/results/eval_report.json` and `eval/results/safety_report.json` if present.
+## Testing and Linting
+```bash
+ruff check .
+pytest -q
+```
+
+## Demo Assets
+Add screenshots/GIF placeholders under `docs/` and link them here:
+- `docs/screenshots/ui-main.png`
+- `docs/screenshots/tool-trace.png`
+- `docs/screenshots/eval-report.png`
+
+## GitHub Hosting Steps
+1. Initialize and push:
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/<YOUR_USERNAME>/refund-returns-agent.git
+git push -u origin main
+```
+
+2. Add CI:
+- Workflow is included at `.github/workflows/ci.yml`.
+
+3. Secrets:
+- Do not commit `.env`.
+- Add any required secrets in GitHub repository settings -> Secrets and variables -> Actions.
+
+4. Git LFS (optional for large artifacts):
+```bash
+git lfs install
+git lfs track "*.safetensors" "*.bin" "*.pt"
+git add .gitattributes
+git commit -m "Track large model artifacts with Git LFS"
+```
+
+5. Releases/tags:
+```bash
+git tag -a v0.1.0 -m "Initial portfolio release"
+git push origin v0.1.0
+```
+- Upload trained adapters as release assets instead of committing multi-GB artifacts.
+
+## Safety + Guardrails
+- Policy engine is the final authority on approvals.
+- Customer text is treated as untrusted input.
+- Prompt injection/fraud/exfil attempts trigger refusal or safe fallback.
+- Logs and outputs mask sensitive fields.
+- Tool use is allowlisted and schema-constrained.
+
+## License
+MIT. See `LICENSE`.

@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 from pipelines.build_dataset import load_olist, split_dataset

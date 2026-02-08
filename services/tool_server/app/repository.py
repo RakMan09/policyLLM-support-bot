@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from hashlib import sha256
 
 from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from services.tool_server.app.models import (
     Base,

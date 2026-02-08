@@ -25,6 +25,8 @@ checkpoints/
 models/
 logs/
 *.log
+*.tar.gz
+*.ipynb_checkpoints/
 
 # OS/editor
 .DS_Store
@@ -33,3 +35,6 @@ logs/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Notebook output artifacts
+notebooks/*.html
