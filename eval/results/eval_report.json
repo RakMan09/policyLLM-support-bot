@@ -1,0 +1,2617 @@
+{
+  "config": {
+    "dataset": "data/processed/synthetic_cases_test.jsonl",
+    "agent_url": "http://localhost:8002",
+    "limit": 200
+  },
+  "metrics": {
+    "n": 200,
+    "decision_accuracy": 0.155,
+    "tool_validity_rate": 1.0,
+    "sequence_correct_rate": 0.0,
+    "efficiency_rate": 1.0,
+    "avg_calls_per_episode": 1
+  },
+  "details": [
+    {
+      "case_id": "CASE-a1d38c97444889282dcb16502b3a8686-5f19455f-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-97a00daa2a648f9c4b0493e937928b72-e4f77c9e-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-85bbb7b7b20d622bb504d5e2be1ce4ca-7a7be236-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-4bd80487e45eb96ed277f47d7b9dca63-9ad536de-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-27a78fdbe7b915a0596af3a5803a41cb-ed5122a6-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d22e9fa5731b9e30e8b27afcdc2f8563-f410090a-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3a129877493c8189c59c60eb71d97c29-7e857e35-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-762a479b42165d528417d5c3220640fc-54d9ac71-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-52432d42fb818ca588e38c5067f73c3f-6e835aea-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d543b0fedeb939f3fda2a3c2fe167b02-e8451206-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a1044dbf7beb1971c71d7b0f94836313-d309288e-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-dd94f2867bcd2be2229f44d7a0df4e5b-4acecc56-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6d646ecd1e4497544257783077e9ce14-3c62f481-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-86f3eab0f6458fbf53389a14fc8ce71a-82495477-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-93b82c635931ca55e5d20e0d095507ce-b659034b-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-bca16cf360ca8795f24ca0beaf2658be-55979acc-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-dbb786efd821d7f903d79cb502ba3083-441293f4-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3d087f98b006ae162b5e3b56e7bfdb4a-306599a0-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-663830a477534735bbdec9de01113fa2-6a8631b7-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-241a57ba96decfbe134f5c84f585f57f-2944c269-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0300095becf10f9b2993706759522741-59f17be6-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-e44a2113e6f06206c4ae9134ab3f6074-0c71252f-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d32ec519c65a1661bb50020bda09194f-09b0d15a-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9a697390de6da65c977ba337071a06a3-5a848e4a-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-acbe07f22f29ad7e5a78f30008cc6ec7-c0a0b5aa-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-270cd1874ca5310906e251407490d66c-10adb53d-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9af31d2f7ebb4bcb16fafffa4236f888-574597aa-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-684e1a86f45edfeeec53b6e903bcf15c-b5fd0668-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a98012aa8c697f2bcff9f8c2183e0f2b-643a66b1-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1e90a410c4be85320d64e5a0cbed9291-c781fcf4-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a6456e781cb962cc3f412b04de4fed7b-47ae44a1-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9d35749dad6abb761c340266c0c206cb-c8c72404-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b5195225c11fc325d686d24fe14eedbb-99b5d7ee-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9167e0a67d886b453dbb9318f1db42cc-76be7b20-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b0fdd351585763ef1abb582c19964a5b-08b2b99a-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3241baf723e29f140a6ff9082b7f9aca-a630323d-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-00471463a6106056c1a2a809f70de640-9df0e8a7-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-7068f14af6c3c575490f74b6aaf2f05c-43ff57af-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-fa3c3fa4aaa5d4ca8cdfdd7daec909bb-ce8a8e2a-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-625f2a06b46e5cbf695ba96293f76721-95380c35-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0c0c2969d3adf4fffa3753dcc37f135d-95625427-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-949d5b44dbf5de918fe9c16f97b45f8a-d0b61bfb-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3933b209d011421f37238c408302ab6a-0705b33f-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-14001e8cd1c29d0bce5b5bfca73338af-e2a5fbce-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-65bbd0719855fe808bb19f62dfa9f42c-d1c42706-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b7a6a74494a5f76ac5f74bc9c1327e5d-ea44caac-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-914e3f7135c8d9046278a046552ebb6e-9798f14f-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-102dc75f04e28c228169dedb666dcd3e-642a40d4-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-2feb60b66471f9985b3f06df1f360f34-3a8023f6-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-8b37f436aea079bd73bbcbe103d14a0b-7b35be46-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-aba440032be16b32505c6e14bb755b0c-5ceafdc1-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-e55981b5cea8072097093592652571ca-6cdd5384-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-758e852ab6d20c02ec1b0f75a024d83f-188d0b14-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-2a206d4997fedfb60455f2a06ae3028a-0b0172eb-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-313ecdf6cb87d671335ffbd49eeb13c9-3ba2b0de-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0c33ff1cd479e404710b74a6077f6248-1e4ab436-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-f825ff64b7a15cd4f3483fb00b6ad59c-b5aa3dc3-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ea88c2a0257950a370dc5a14925d3871-35ebf08a-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-8ac7bcd85522aa82e2d89d27ea9cb818-96409307-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-e3d98850cbbdab2420e8a49cf21bf194-b60856ce-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c7712c0f5217ae36e0539a1caea73839-0aabfb37-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ad7ddb009f1bcd6c40cb1106471c292c-06c950c3-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c4338fc6904fe8ebef8e0e42ead3c0e0-75d6b696-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b727342259c06ae7d97115cb632073bb-c1f5307d-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1c7c35deaf3a1639e247ce03babdfded-b2b74824-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-179e23361d372901e40a92f8c29bd61d-9e10eb05-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-bd1e1a304d04fa76626646f8efa12f77-57e089e3-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-82566a660a982b15fb86e904c8d32918-72a97c27-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6373b46dd60ea2f0d7890c131155a0a8-b92a7304-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-09d3f9f1be63c067456cc619076685a1-2d2fbde9-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-7f579e203c931f3e8410103359c6d523-6463e442-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-4941da6e1a4eef723674c7148152c4f6-d1af7952-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9eb401aae2d502a73f4a27f97d3bebf5-a291cc84-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-20a6605d8265ca357d15eaf4f6710f63-e6b6e13c-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-260a8f34d9837b682c7a6c52cc8d9193-5b8423dc-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-650ca3873d0a09fb4604deef7817ef60-07691def-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-4fc94c8676998593a574d390d50dea42-19c91ef9-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-4438691d291f7a436db5665e8d010ac9-e4e9fa02-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-98a6c523ea54e65d9320d388708b49d3-5a6eeab6-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-64ea4c51ad1203229ba011693f35da54-36f60d45-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-28fa410eec232354726af94904c6fa9b-61a53738-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-5aa89bb7eb1a8dca4d70fcd37878c8a4-e84997d7-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-62b2adbcbcf4e28df4b998bfb094f3f9-b30d7b0a-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-2478ddd1d1395639b71cf0d498d8dbf6-6bd755fb-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1d767ef13195f2cb3337b6b077e1f752-995132c3-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-43d88b0e949865904334dd5b3ca63f50-2028bf1b-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-da9d5d868a28b17116214d1240c22837-69898c1a-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ebca4856d6b3b849437fe99d11633d25-ec268f06-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-884fc1672d7c26265ce8f3b2e2369b32-99a4788c-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-92ea4e83a1cbd42cfc62e113b8a00797-1107055c-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-7da78752e9ddd817f22933c2763db33c-df5a9191-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ee6f7abb8cf6ea119dbd09f8cf6acbfe-afdb0831-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b3206cf64b7cd1480a6c6f9912b20666-7bbe91cc-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-649119592692c2ce73021844e7892aa6-c2a1ff84-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a3868921c7af20ac7aafb5e8b7b5b4ba-e1ed9c25-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b52ce41a14821d9fa67f8a77cebb3efc-4b5e2693-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-2050ad559df86365b2d2a824640af4a1-edf219ca-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-36530871a5e80138db53bcfd8a104d90-ba4bfbf7-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b7a418412fbab412e2a4da964aa235e4-5b8a5a94-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b483e46d6e6756224ac7bfebadf91e15-57c580a8-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-526e735eb29aafd817d59ca159eb7aab-610c6733-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d9f8272ce07f87bd2168f47bd2010235-8232a265-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c84cb424afdb4c6b771f39743b3716e0-f720c39e-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6b9ac2a31d647731d9523ae035f17dbc-2948658c-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-edcc6b79e8394346ba3ba21b00b4055e-c6e474e4-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-8cbaf68384ba4227bbfb3ccb24c7c1a2-d245838e-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-7107c5823a581db0314f8f0fa95f61e7-3b0fbb3a-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-f1847d849e2d6711494f463343546542-642a40d4-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1f69e4870ffb8313df2fef3df0af2718-b5f0fccc-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-f62e6208120b502c087a5bbd9b2567e4-4c2394ab-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1e0fdb7395b6eab4335b7a41b88813e4-87cb507e-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-5f890a619c8d23b671705de61578d238-9c7c7294-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-83a9c18344682fcbc57696019ff1ff2a-ea44caac-damaged",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-910672810c4151ca48b6946cf9ba0418-f646af31-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b2ec82a4b2d9bf24fc1f5ba0e4883bdc-bdb0b11a-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-93ec3e2c9a4beee38c28973d307093e1-7ae5c429-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9c5f3018cce3b5a74df31586dae02c4a-c7dd80b2-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-66305a754211cca47c3a2a59addf19ba-1f8fc2e1-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-49afa8bc01b5b6aa01e875a0785cc7bf-25a2985f-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c9c727aec325e060789405c422a90c1d-912d1fc2-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0d17a5f9272e9cf9e9883f404fc61edf-82006437-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-e391c35b78728b170cead56c6a53980a-2772d1e4-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-67c2939389900ee5ef95296df8691336-0b3f6a23-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c9a41eaac7ef0fb40b81c58e3c7276c9-53759a2e-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-50fe82ce977520094518dd8618d7331a-d245838e-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d95236c2780d744b3bd884f327590d14-368c6c73-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c53b15af645d91a057ddba9d0e1f21c7-727a46f0-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-f161009fa560294248d76cf02ea7443f-d6bd998d-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ebc8d4b1397747291b758772e9d87984-3354a4e6-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3f8ef8494797fd747668dde5870c1a76-48882f9b-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-db75b87461daf92c7fdf7310f347d229-b5e13c9a-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0b584b729bdfec204ec2aa5d21d6ca56-4a0d42e0-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-5a88502f6bbc1f8c972aa98c64830616-99a4788c-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d307290675e59c844ebde65696377750-5be900d0-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0417dce62cd5791d3d0005ca971b2ba7-664085fc-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d381b82dfce3b3c57938ed35c09ce096-8f8d1391-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b239ca7cd485940b31882363b52e6674-dd113cb0-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b06112f703115e6d92f3baf4e2458a5a-f40876e0-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-aa0b425987bdeae4a29c616a2bc3a08a-9eacfe99-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-96baca12064c33aaee05b2a4be3f3f2c-2772d1e4-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6d46f8b7f485ad93146f9880682d4eb2-5522d9e4-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-4c3c0b124df3a9bbd44a538ec578147b-3e442d09-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a6aeb116d2cb5013eb8a94585b71ffef-163e6400-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-efd3e6079ebd4d192d41aa488cbc1757-3fc18e3a-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-cd4d7e23c22aeff7984a40a3045e9751-cf45cea9-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-8b6698a86e777937d240b9c7b6476ce9-95652292-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ab18ff09f55ca3ccc4dbf5bed2c9036d-ea3be87c-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-503b1d55537c749ca776d67d0d765cf9-422879e1-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c6bf92017bd40729c135b58b643f64c2-3f1a741c-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-97fdf3115437c18e71138bdaa80ec60b-34d63063-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-4f4cdcc0b6af1eb7d23872ddc92b5d05-a7d06b77-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-dd78f560c270f1909639c11b925620ea-00baba5b-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-31ef15cb5a3faa4df17e96b09cd8c1a1-da023890-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ca186afb25218627f21f78bcb9a5ea08-e24c96c2-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-fb2dccfadca8cd6ebddc5d10ae48d1f7-f72b26ee-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-fb4c699559386e0b6b970181177d99bd-10717ff4-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6f6665c1d76e55561978ccb45bdcafc6-d86db9a9-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9021cf1919f615a121410790dcce848f-e3db4661-late_delivery",
+      "gold_action": "approve_refund",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d47e5fbb24cade152dd968c93b0f0c66-1ed4a792-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3324048ac2f2df01f583f71758589776-ff907ae8-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-25e5f6a88a4525f820943240376c45c5-cf5fb18f-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-93ee5063c90357efe9aaeabb20badbf6-f32415d2-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-9db0b5f3481614484592866ec7c902f3-dd175983-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1d52ba7197c7acebbb4f826f6585536f-4c35791f-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-f8ac1de7953f257102599bdaad640722-4178e163-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-d3e0a0298be4e950a2271ef880d8e1ff-dd47440c-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a1f115db2222fcb78c129bf36d76d4dd-e502a4cf-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-34c3abee8d77fe0a974fdfa816078235-4af7719f-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1d5b194c01e762aa59a47ae8dca7199f-c6ea6336-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-46f3c70ec2c3e58a0c126aeb5d10d9b9-8e630a61-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-71dc9d3a6d378bbde8b7629eaae7c3a0-67386fbc-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1cbcc355e275e5143ab1dbf260ca14f1-222efa72-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-f6f6a68d78c7dd4b319f6df3c846094b-7fab1a14-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0755fe651d86dd2feb3c6fff952d81e8-36ed077d-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-797fe018b83e5b8aaef674bad19874e9-0522015a-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-68873cf91053cd11e6b49a766db5af1a-15a9e834-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6958c1e09a9e49c2071dbb679d577422-c6336fa9-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-ebb1c6b241437a3a506a9a9ca419cbb3-c6dd917a-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3d0ad2666f5de49d63ad8ed0af80d3bc-798edd0e-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-915a2730449787ced8fbbc1794ca7d0b-b8985a4d-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-b98a5e1f2c386eb67df00a633c98848e-6daadc7e-wrong_item",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-c8126206d94637a4e63af00f4181a14d-4fb3e6ce-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3fb155b4897652f5cdf1b5efff32a465-1dec4c88-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3b2cfa22d9226264ad6c05510c4a3ef3-aa8bc559-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-a0411a1811cf1c3c1312372cb0495c6f-addc4d1f-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-333c80174d4ab24df54210511f4ecbd0-5fbfa851-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-92a9ef7f0a0d392c9ad0d5f44e86b4ba-9f1c3e71-late_delivery",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-6c3135486d8821b2877a0f8d92095a6d-d2686065-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-171fac25aa2fde5b05b3109d582d04bb-4b6b3a70-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-100ed138d169a3f969afa5449750db73-461f43be-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-648a268c494bbf8c97c03ec64c2ff4d3-422879e1-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0f8532e6a9c1e86b215fda5c13f37fad-22594ba8-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-0daf1f0e67b534ad873ba61c5d6ad7d3-1f30aacc-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1ed4e96d371387280707c53f4555031b-e2e426d1-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-2fc59b5605bf0cfc03638cb2cca26b16-bc1771ee-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-68e48e68da1f50f7c5838ea75e3a20dd-a659cb33-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-98e54ac24cb241c366307ed88ae84902-00d2add8-damaged",
+      "gold_action": "request_info",
+      "pred_action": "request_info",
+      "decision_correct": true,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-1fb143495c17f9d09e20b8016a8e5430-6f5a84d7-changed_mind",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-3c8f1081e21484680c3885d3bb35272c-3efd399c-defective",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    },
+    {
+      "case_id": "CASE-95ca5e38f67d0f792b4fa38683682a0d-de01db01-not_as_described",
+      "gold_action": "deny",
+      "pred_action": "request_info",
+      "decision_correct": false,
+      "valid_tools": true,
+      "sequence_ok": false,
+      "efficiency_calls": 1,
+      "efficient": true,
+      "tool_names": [
+        "lookup_order"
+      ]
+    }
+  ]
+}

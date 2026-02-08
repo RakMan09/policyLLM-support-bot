@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: refund_agent_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: refund_agent
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d refund_agent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  tool_server:
+    build:
+      context: .
+      dockerfile: services/tool_server/Dockerfile
+    container_name: refund_agent_tool_server
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/refund_agent
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+
+  agent_server:
+    build:
+      context: .
+      dockerfile: services/agent_server/Dockerfile
+    container_name: refund_agent_agent_server
+    env_file:
+      - .env
+    environment:
+      TOOL_SERVER_URL: http://tool_server:8001
+    depends_on:
+      - tool_server
+    ports:
+      - "8002:8002"
+
+  ui:
+    build:
+      context: .
+      dockerfile: services/ui/Dockerfile
+    container_name: refund_agent_ui
+    environment:
+      PYTHONUNBUFFERED: "1"
+      AGENT_SERVER_URL: http://agent_server:8002
+    depends_on:
+      - agent_server
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./eval/results:/app/eval/results:ro
+
+volumes:
+  postgres_data:
