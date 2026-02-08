@@ -26,11 +26,12 @@ st.markdown(
     """
     <style>
     :root {
-      --bg-a: #f7fafc;
-      --bg-b: #e7eef5;
+      --bg-a: #f8fbff;
+      --bg-b: #edf3f9;
       --panel: #ffffff;
-      --text: #1b263b;
-      --border: #d6e1eb;
+      --text: #111827;
+      --muted: #334155;
+      --border: #cfd8e3;
     }
     .stApp {
       background: radial-gradient(circle at 12% 12%, #ffffff 0%, var(--bg-a) 42%, var(--bg-b) 100%);
@@ -39,6 +40,7 @@ st.markdown(
     [data-testid="stSidebar"] {
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       border-right: 1px solid var(--border);
+      color: var(--text);
     }
     .hero {
       background: linear-gradient(120deg, #264653 0%, #457b9d 52%, #2a9d8f 100%);
@@ -59,12 +61,13 @@ st.markdown(
       font-size: 0.95rem;
     }
     .info-card {
-      background: var(--panel);
+      background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 12px 14px;
       margin-bottom: 10px;
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      color: var(--text);
     }
     .status-chip {
       display: inline-block;
@@ -76,15 +79,17 @@ st.markdown(
       margin-top: 8px;
     }
     .timeline-wrap {
-      background: var(--panel);
+      background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 8px;
+      color: var(--text);
     }
     .stChatMessage {
       border-radius: 12px;
       border: 1px solid var(--border);
       background: #ffffff;
+      color: var(--text);
     }
     .control-box {
       background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
@@ -92,6 +97,17 @@ st.markdown(
       border-radius: 12px;
       padding: 10px 12px;
       margin: 8px 0;
+      color: var(--text);
+    }
+    .stTextInput label, .stNumberInput label, .stSelectbox label {
+      color: var(--text) !important;
+      font-weight: 600;
+    }
+    .stMarkdown, .stCaption, p, span, div {
+      color: var(--text);
+    }
+    code {
+      color: #0f172a !important;
     }
     </style>
     """,
