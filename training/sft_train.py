@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import inspect
 import json
 from pathlib import Path
 from typing import Any
@@ -200,23 +201,30 @@ def run_training(
     train_ds = Dataset.from_list(train_rows)
     eval_ds = Dataset.from_list(val_rows) if val_rows else None
 
-    args = TrainingArguments(
-        output_dir=str(output_dir),
-        per_device_train_batch_size=batch_size,
-        per_device_eval_batch_size=batch_size,
-        gradient_accumulation_steps=grad_accum,
-        learning_rate=learning_rate,
-        num_train_epochs=num_epochs,
-        bf16=torch.cuda.is_bf16_supported(),
-        fp16=not torch.cuda.is_bf16_supported(),
-        logging_steps=10,
-        save_steps=200,
-        eval_steps=200 if eval_ds is not None else None,
-        evaluation_strategy="steps" if eval_ds is not None else "no",
-        save_total_limit=2,
-        report_to=[],
-        gradient_checkpointing=True,
-    )
+    arg_kwargs = {
+        "output_dir": str(output_dir),
+        "per_device_train_batch_size": batch_size,
+        "per_device_eval_batch_size": batch_size,
+        "gradient_accumulation_steps": grad_accum,
+        "learning_rate": learning_rate,
+        "num_train_epochs": num_epochs,
+        "bf16": torch.cuda.is_bf16_supported(),
+        "fp16": not torch.cuda.is_bf16_supported(),
+        "logging_steps": 10,
+        "save_steps": 200,
+        "eval_steps": 200 if eval_ds is not None else None,
+        "save_total_limit": 2,
+        "report_to": [],
+        "gradient_checkpointing": True,
+    }
+    ta_sig = inspect.signature(TrainingArguments.__init__)
+    strategy_value = "steps" if eval_ds is not None else "no"
+    if "evaluation_strategy" in ta_sig.parameters:
+        arg_kwargs["evaluation_strategy"] = strategy_value
+    elif "eval_strategy" in ta_sig.parameters:
+        arg_kwargs["eval_strategy"] = strategy_value
+
+    args = TrainingArguments(**arg_kwargs)
 
     trainer = SFTTrainer(
         model=model,
