@@ -95,15 +95,27 @@ def run_dpo_training(
     lora_alpha: int,
     lora_dropout: float,
 ) -> None:
+    from packaging.version import parse as vparse
+    import accelerate
+    import transformers
     import torch
     from datasets import Dataset
     from peft import LoraConfig, PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, TrainingArguments
     from trl import DPOTrainer
+    try:
+        from trl import DPOConfig  # type: ignore
+    except Exception:
+        DPOConfig = None  # type: ignore
 
     if not torch.cuda.is_available():
         raise RuntimeError(
             "DPO training in this script requires CUDA GPU. Use --prepare-only on CPU/macOS or run on a CUDA host."
+        )
+    if vparse(transformers.__version__) >= vparse("4.56.0") and vparse(accelerate.__version__) < vparse("1.0.0"):
+        raise RuntimeError(
+            "Incompatible library versions detected: transformers>=4.56 requires newer accelerate for Trainer runtime. "
+            "Run: pip install -U 'accelerate>=1.0.0' and restart runtime."
         )
 
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True)
@@ -163,7 +175,28 @@ def run_dpo_training(
     elif "eval_strategy" in ta_sig.parameters:
         arg_kwargs["eval_strategy"] = strategy_value
 
-    args = TrainingArguments(**arg_kwargs)
+    if DPOConfig is not None:
+        dpo_sig = inspect.signature(DPOConfig.__init__)
+        dpo_kwargs = dict(arg_kwargs)
+        if "beta" in dpo_sig.parameters:
+            dpo_kwargs["beta"] = beta
+        if "max_length" in dpo_sig.parameters:
+            dpo_kwargs["max_length"] = max_length
+        if "max_prompt_length" in dpo_sig.parameters:
+            dpo_kwargs["max_prompt_length"] = max_prompt_length
+        args = DPOConfig(**dpo_kwargs)
+    else:
+        args = TrainingArguments(**arg_kwargs)
+        # Backward/forward compatibility shim for TRL versions expecting DPOConfig attrs.
+        for attr, default in [
+            ("model_init_kwargs", None),
+            ("ref_model_init_kwargs", None),
+            ("beta", beta),
+            ("max_length", max_length),
+            ("max_prompt_length", max_prompt_length),
+        ]:
+            if not hasattr(args, attr):
+                setattr(args, attr, default)
 
     kwargs: dict[str, Any] = {
         "model": model,

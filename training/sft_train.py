@@ -160,11 +160,20 @@ def run_training(
     lora_alpha: int,
     lora_dropout: float,
 ) -> None:
+    from packaging.version import parse as vparse
+    import accelerate
+    import transformers
     import torch
     from datasets import Dataset
     from peft import LoraConfig
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, TrainingArguments
     from trl import SFTTrainer
+
+    if vparse(transformers.__version__) >= vparse("4.56.0") and vparse(accelerate.__version__) < vparse("1.0.0"):
+        raise RuntimeError(
+            "Incompatible library versions detected: transformers>=4.56 requires newer accelerate for Trainer runtime. "
+            "Run: pip install -U 'accelerate>=1.0.0' and restart runtime."
+        )
 
     if not torch.cuda.is_available():
         raise RuntimeError(
