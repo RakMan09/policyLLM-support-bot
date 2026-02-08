@@ -137,8 +137,10 @@ def run_dpo_training(
     )
 
     # Optional warm-start from SFT adapter weights.
+    loaded_existing_adapter = False
     if adapter_init_dir is not None and (adapter_init_dir / "adapter_config.json").exists():
         model = PeftModel.from_pretrained(model, str(adapter_init_dir), is_trainable=True)
+        loaded_existing_adapter = True
 
     peft_config = LoraConfig(
         r=lora_r,
@@ -217,7 +219,8 @@ def run_dpo_training(
         kwargs["max_length"] = max_length
     if "max_prompt_length" in sig.parameters:
         kwargs["max_prompt_length"] = max_prompt_length
-    if "peft_config" in sig.parameters:
+    # TRL rejects passing peft_config when model is already a PeftModel.
+    if "peft_config" in sig.parameters and not loaded_existing_adapter:
         kwargs["peft_config"] = peft_config
     if "ref_model" in sig.parameters:
         kwargs["ref_model"] = None
