@@ -170,20 +170,24 @@ def run_dpo_training(
         "args": args,
         "train_dataset": train_ds,
         "eval_dataset": eval_ds,
-        "tokenizer": tokenizer,
-        "beta": beta,
-        "max_length": max_length,
-        "max_prompt_length": max_prompt_length,
-        "peft_config": peft_config,
     }
 
     sig = inspect.signature(DPOTrainer.__init__)
+    if "tokenizer" in sig.parameters:
+        kwargs["tokenizer"] = tokenizer
+    elif "processing_class" in sig.parameters:
+        kwargs["processing_class"] = tokenizer
+
+    if "beta" in sig.parameters:
+        kwargs["beta"] = beta
+    if "max_length" in sig.parameters:
+        kwargs["max_length"] = max_length
+    if "max_prompt_length" in sig.parameters:
+        kwargs["max_prompt_length"] = max_prompt_length
+    if "peft_config" in sig.parameters:
+        kwargs["peft_config"] = peft_config
     if "ref_model" in sig.parameters:
         kwargs["ref_model"] = None
-
-    if "processing_class" in sig.parameters and "tokenizer" not in sig.parameters:
-        kwargs.pop("tokenizer", None)
-        kwargs["processing_class"] = tokenizer
 
     trainer = DPOTrainer(**kwargs)
     trainer.train()

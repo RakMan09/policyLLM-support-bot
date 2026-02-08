@@ -226,16 +226,29 @@ def run_training(
 
     args = TrainingArguments(**arg_kwargs)
 
-    trainer = SFTTrainer(
-        model=model,
-        tokenizer=tokenizer,
-        train_dataset=train_ds,
-        eval_dataset=eval_ds,
-        peft_config=peft_config,
-        args=args,
-        dataset_text_field="text",
-        max_seq_length=max_seq_len,
-    )
+    sft_kwargs: dict[str, Any] = {
+        "model": model,
+        "train_dataset": train_ds,
+        "eval_dataset": eval_ds,
+        "peft_config": peft_config,
+        "args": args,
+    }
+    sft_sig = inspect.signature(SFTTrainer.__init__)
+
+    if "tokenizer" in sft_sig.parameters:
+        sft_kwargs["tokenizer"] = tokenizer
+    elif "processing_class" in sft_sig.parameters:
+        sft_kwargs["processing_class"] = tokenizer
+
+    if "dataset_text_field" in sft_sig.parameters:
+        sft_kwargs["dataset_text_field"] = "text"
+    elif "formatting_func" in sft_sig.parameters:
+        sft_kwargs["formatting_func"] = lambda example: example["text"]
+
+    if "max_seq_length" in sft_sig.parameters:
+        sft_kwargs["max_seq_length"] = max_seq_len
+
+    trainer = SFTTrainer(**sft_kwargs)
 
     trainer.train()
     trainer.save_model(str(output_dir / "adapter"))
