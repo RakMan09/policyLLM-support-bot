@@ -98,6 +98,11 @@ jobs:
       - name: Prepare env file
         run: |
           cp .env.example .env
+          if grep -q '^AGENT_MODE=' .env; then
+            sed -i 's/^AGENT_MODE=.*/AGENT_MODE=deterministic/' .env
+          else
+            echo 'AGENT_MODE=deterministic' >> .env
+          fi
 
       - name: Start stack
         run: |
