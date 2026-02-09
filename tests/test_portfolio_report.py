@@ -14,8 +14,10 @@ def test_render_report_contains_core_sections():
         {"metrics": {"task_success_rate": 1.0, "avg_turns_to_resolution": 5}},
         {"summary": {"pass_rate": 0.8}},
         {"ok": True},
+        {"ready": True, "mode": "hybrid", "adapter_dir": "models/dpo_qlora/adapter"},
     )
     assert "## Product Overview" in text
     assert "## Engineering Scope Implemented" in text
     assert "Offline decision_accuracy: 0.2" in text
     assert "Safety pass_rate: 0.8" in text
+    assert "Model runtime ready: True (mode: hybrid)" in text

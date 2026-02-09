@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "agent_url": "http://localhost:8002",
+  "model_status": {
+    "mode": "hybrid",
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.2",
+    "adapter_dir": "models/dpo_qlora/adapter",
+    "ready": true,
+    "missing_artifacts": [],
+    "enabled": true,
+    "load_error": null
+  },
+  "session_id": "SES-ff0618720072",
+  "case_id": "CASE-4b8155487ffb",
+  "issues": []
+}

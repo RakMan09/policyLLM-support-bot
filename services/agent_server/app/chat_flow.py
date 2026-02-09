@@ -4,10 +4,12 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from services.agent_server.app.guardrails import looks_like_fraud_or_exfil, looks_like_injection
+from services.agent_server.app.llm_agent import LLMAdvisor
 from services.agent_server.app.schemas import (
     ChatControl,
     ChatMessageRequest,
     ChatMessageResponse,
+    ChatResumeResponse,
     ChatStartRequest,
     ChatStartResponse,
 )
@@ -40,6 +42,19 @@ def _infer_reason(text: str) -> str | None:
     return None
 
 
+def _infer_preferred_resolution(text: str) -> str | None:
+    t = text.lower()
+    if "replacement" in t or "replace" in t:
+        return "replacement"
+    if "store credit" in t or "credit" in t:
+        return "store_credit"
+    if "return" in t:
+        return "return"
+    if "refund" in t:
+        return "refund"
+    return None
+
+
 def _base_state() -> dict:
     return {
         "stage": "need_identifier",
@@ -47,7 +62,7 @@ def _base_state() -> dict:
         "selected_order_id": None,
         "selected_items": [],
         "reason": None,
-        "preferred_resolution": "refund",
+        "preferred_resolution": None,
         "evidence_uploaded": False,
         "evidence_id": None,
         "evidence_validation": None,
@@ -57,8 +72,9 @@ def _base_state() -> dict:
 
 
 class ChatFlowManager:
-    def __init__(self, tools: ToolClient):
+    def __init__(self, tools: ToolClient, llm: LLMAdvisor | None = None):
         self.tools = tools
+        self.llm = llm or LLMAdvisor()
 
     def start(self, req: ChatStartRequest) -> ChatStartResponse:
         session_id = f"SES-{uuid4().hex[:12]}"
@@ -223,6 +239,9 @@ class ChatFlowManager:
         if req.reason:
             state["reason"] = req.reason
 
+        if req.preferred_resolution:
+            state["preferred_resolution"] = req.preferred_resolution
+
         if req.evidence_uploaded:
             state["evidence_uploaded"] = True
 
@@ -306,6 +325,21 @@ class ChatFlowManager:
 
         if not state.get("reason"):
             inferred = _infer_reason(user_text)
+            if not inferred:
+                inferred = self.llm.extract_reason(
+                    user_text,
+                    [
+                        "refund_request",
+                        "return_request",
+                        "defective",
+                        "cancel_order",
+                        "wrong_item",
+                        "damaged",
+                        "late_delivery",
+                        "changed_mind",
+                        "not_as_described",
+                    ],
+                )
             if inferred:
                 state["reason"] = inferred
             else:
@@ -339,6 +373,43 @@ class ChatFlowManager:
 
         if reason == "cancel_order":
             return self._handle_cancel(req, case_id, state)
+
+        if not state.get("preferred_resolution"):
+            if state.get("evidence_uploaded"):
+                state["preferred_resolution"] = "refund"
+            elif "refund" in user_text.lower():
+                state["preferred_resolution"] = "refund"
+
+        if not state.get("preferred_resolution"):
+            pref = _infer_preferred_resolution(user_text)
+            if not pref:
+                pref = self.llm.extract_reason(
+                    user_text,
+                    ["refund", "return", "replacement", "store_credit"],
+                )
+            if pref in {"refund", "return", "replacement", "store_credit"}:
+                state["preferred_resolution"] = pref
+            else:
+                self._save_state(req.session_id, state)
+                return self._resp(
+                    req.session_id,
+                    case_id,
+                    "How would you like this resolved?",
+                    "Awaiting User Choice",
+                    [
+                        ChatControl(
+                            control_type="buttons",
+                            field="preferred_resolution",
+                            label="Preferred resolution",
+                            options=[
+                                {"label": "Refund", "value": "refund"},
+                                {"label": "Return", "value": "return"},
+                                {"label": "Replacement", "value": "replacement"},
+                                {"label": "Store credit", "value": "store_credit"},
+                            ],
+                        )
+                    ],
+                )
 
         if reason == "damaged" and not state.get("evidence_uploaded"):
             self._save_state(req.session_id, state)
@@ -410,6 +481,40 @@ class ChatFlowManager:
 
         return self._handle_resolution(req, case_id, state)
 
+    def resume(self, session_id: str) -> ChatResumeResponse:
+        session = self.tools.get_session({"session_id": session_id})
+        state = dict(session.get("state", {}))
+        case_id = session["case_id"]
+        controls = self._controls_from_state(state, session.get("status", "active"))
+        status_chip = self._status_chip_from_state(state, session.get("status", "active"))
+        messages_raw = self.tools.get_chat_messages({"session_id": session_id, "limit": 500}).get("messages", [])
+        messages = []
+        for m in messages_raw:
+            role = "assistant" if m.get("role") == "assistant" else "user"
+            messages.append({"role": role, "content": m.get("content", "")})
+
+        if not messages:
+            messages = [
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Session resumed. I can continue with refund, return, replacement, "
+                        "missing/wrong item, late delivery, or cancellation."
+                    ),
+                }
+            ]
+
+        assistant_message = messages[-1]["content"] if messages else "Session resumed."
+        return ChatResumeResponse(
+            session_id=session_id,
+            case_id=case_id,
+            assistant_message=assistant_message,
+            status_chip=status_chip,
+            controls=controls,
+            timeline=state.get("timeline", []),
+            messages=messages,
+        )
+
     def _handle_cancel(self, req: ChatMessageRequest, case_id: str, state: dict) -> ChatMessageResponse:
         order_lookup = self.tools.lookup_order({"order_id": state["selected_order_id"]})
         order = order_lookup.get("order")
@@ -458,6 +563,35 @@ class ChatFlowManager:
 
     def _handle_alternative(self, req: ChatMessageRequest, case_id: str, state: dict) -> ChatMessageResponse:
         if req.reason == "replacement":
+            if state.get("selected_order_id") and state.get("selected_items"):
+                rep = self.tools.create_replacement(
+                    {
+                        "order_id": state["selected_order_id"],
+                        "item_id": state["selected_items"][0],
+                    }
+                )
+                self._append_timeline(state, "Alternative selected", f"replacement={rep['replacement_id']}")
+                self._save_state(req.session_id, state, status="pending_replacement")
+                return self._resp(
+                    req.session_id,
+                    case_id,
+                    (
+                        f"Replacement initiated: {rep['replacement_id']}. "
+                        "You will receive shipment details shortly. Are you satisfied?"
+                    ),
+                    "Replacement Pending",
+                    [
+                        ChatControl(
+                            control_type="buttons",
+                            field="satisfaction",
+                            label="Are you satisfied with this resolution?",
+                            options=[
+                                {"label": "Yes, end chat", "value": "yes"},
+                                {"label": "No, continue", "value": "no"},
+                            ],
+                        )
+                    ],
+                )
             state["stage"] = "terminal_wait"
             self._append_timeline(state, "Alternative selected", "replacement")
             self._save_state(req.session_id, state, status="pending_replacement")
@@ -542,6 +676,145 @@ class ChatFlowManager:
         }
         return mapping.get(reason, reason)
 
+    def _status_chip_from_state(self, state: dict, session_status: str) -> str:
+        if session_status == "pending_refund":
+            return "Refund Pending"
+        if session_status == "pending_replacement":
+            return "Replacement Pending"
+        if session_status == "pending_return":
+            return "Return Pending"
+        if session_status == "escalated":
+            return "Escalated"
+        if session_status == "resolved":
+            return "Resolved"
+        if session_status == "refused":
+            return "Refused"
+        if state.get("customer_identifier") and not state.get("selected_order_id"):
+            return "Awaiting User Choice"
+        if state.get("selected_order_id") and not state.get("selected_items"):
+            return "Awaiting User Choice"
+        if state.get("selected_items") and not state.get("reason"):
+            return "Awaiting User Choice"
+        if state.get("reason") == "damaged" and not state.get("evidence_uploaded"):
+            return "Awaiting Evidence"
+        if state.get("stage") == "need_identifier":
+            return "Awaiting User Info"
+        if state.get("stage") == "offer_alternatives":
+            return "Awaiting User Choice"
+        if state.get("stage") == "need_evidence":
+            return "Awaiting Evidence"
+        return "Awaiting User Choice"
+
+    def _controls_from_state(self, state: dict, session_status: str) -> list[ChatControl]:
+        if session_status in {"resolved", "refused"} and state.get("terminal"):
+            return []
+        if state.get("stage") == "offer_alternatives":
+            return [
+                ChatControl(
+                    control_type="buttons",
+                    field="reason",
+                    label="Alternative resolution",
+                    options=[
+                        {"label": "Replacement", "value": "replacement"},
+                        {"label": "Store credit", "value": "store_credit"},
+                        {"label": "Escalate to human", "value": "escalate"},
+                    ],
+                )
+            ]
+        if not state.get("customer_identifier"):
+            return [
+                ChatControl(
+                    control_type="text",
+                    field="identifier",
+                    label="Order ID / email / phone last 4",
+                )
+            ]
+        if not state.get("selected_order_id"):
+            orders = self.tools.list_orders({"customer_identifier": state["customer_identifier"]}).get("orders", [])
+            return [
+                ChatControl(
+                    control_type="dropdown",
+                    field="selected_order_id",
+                    label="Select order",
+                    options=[
+                        {"label": f"{o['order_id']} ({o['status']})", "value": o["order_id"]}
+                        for o in orders
+                    ],
+                )
+            ]
+        if not state.get("selected_items"):
+            items = self.tools.list_order_items({"order_id": state["selected_order_id"]}).get("items", [])
+            return [
+                ChatControl(
+                    control_type="multiselect",
+                    field="selected_item_ids",
+                    label="Select item(s)",
+                    options=[
+                        {"label": f"{i['item_id']} ({i['item_category']})", "value": i["item_id"]}
+                        for i in items
+                    ],
+                )
+            ]
+        if not state.get("reason"):
+            return [
+                ChatControl(
+                    control_type="buttons",
+                    field="reason",
+                    label="Reason",
+                    options=[
+                        {"label": "Refund Request", "value": "refund_request"},
+                        {"label": "Return Request", "value": "return_request"},
+                        {"label": "Replacement", "value": "defective"},
+                        {"label": "Cancel Order", "value": "cancel_order"},
+                        {"label": "Missing / Wrong Item", "value": "wrong_item"},
+                        {"label": "Damaged", "value": "damaged"},
+                        {"label": "Late Delivery", "value": "late_delivery"},
+                        {"label": "Changed Mind", "value": "changed_mind"},
+                    ],
+                )
+            ]
+        if state.get("reason") == "damaged" and not state.get("evidence_uploaded"):
+            return [
+                ChatControl(
+                    control_type="file_upload",
+                    field="evidence_uploaded",
+                    label="Upload damage photo",
+                )
+            ]
+        if not state.get("preferred_resolution"):
+            return [
+                ChatControl(
+                    control_type="buttons",
+                    field="preferred_resolution",
+                    label="Preferred resolution",
+                    options=[
+                        {"label": "Refund", "value": "refund"},
+                        {"label": "Return", "value": "return"},
+                        {"label": "Replacement", "value": "replacement"},
+                        {"label": "Store credit", "value": "store_credit"},
+                    ],
+                )
+            ]
+        if session_status in {
+            "pending_refund",
+            "pending_return",
+            "pending_replacement",
+            "escalated",
+            "resolved",
+        }:
+            return [
+                ChatControl(
+                    control_type="buttons",
+                    field="satisfaction",
+                    label="Are you satisfied with this resolution?",
+                    options=[
+                        {"label": "Yes, end chat", "value": "yes"},
+                        {"label": "No, continue", "value": "no"},
+                    ],
+                )
+            ]
+        return []
+
     def _handle_resolution(self, req: ChatMessageRequest, case_id: str, state: dict) -> ChatMessageResponse:
         order_lookup = self.tools.lookup_order({"order_id": state["selected_order_id"]})
         order = order_lookup.get("order")
@@ -562,11 +835,80 @@ class ChatFlowManager:
             state["stage"] = "terminal_wait"
             self._append_timeline(state, "Decision", eligibility.get("decision_reason", "deny"))
             self._save_state(req.session_id, state, status="resolved")
+            deny_msg = (
+                f"This case is not eligible: {eligibility.get('decision_reason')}. Are you satisfied?"
+            )
+            drafted = self.llm.draft_reply(
+                "deny_refund",
+                {
+                    "reason": state["reason"],
+                    "decision_reason": eligibility.get("decision_reason"),
+                    "ask_satisfaction": True,
+                },
+            )
+            if drafted:
+                deny_msg = drafted
             return self._resp(
                 req.session_id,
                 case_id,
-                f"This case is not eligible: {eligibility.get('decision_reason')}. Are you satisfied?",
+                deny_msg,
                 "Denied",
+                [
+                    ChatControl(
+                        control_type="buttons",
+                        field="satisfaction",
+                        label="Are you satisfied with this resolution?",
+                        options=[
+                            {"label": "Yes, end chat", "value": "yes"},
+                            {"label": "No, continue", "value": "no"},
+                        ],
+                    )
+                ],
+            )
+
+        preferred = state.get("preferred_resolution", "refund")
+
+        if preferred == "replacement":
+            replacement = self.tools.create_replacement(
+                {"order_id": order["order_id"], "item_id": order["item_id"]}
+            )
+            state["stage"] = "terminal_wait"
+            self._append_timeline(
+                state,
+                "Resolution",
+                f"replacement={replacement['replacement_id']}",
+            )
+            self._save_state(req.session_id, state, status="pending_replacement")
+            return self._resp(
+                req.session_id,
+                case_id,
+                (
+                    f"Replacement initiated: {replacement['replacement_id']}. "
+                    "You will receive shipment details shortly. Are you satisfied?"
+                ),
+                "Replacement Pending",
+                [
+                    ChatControl(
+                        control_type="buttons",
+                        field="satisfaction",
+                        label="Are you satisfied with this resolution?",
+                        options=[
+                            {"label": "Yes, end chat", "value": "yes"},
+                            {"label": "No, continue", "value": "no"},
+                        ],
+                    )
+                ],
+            )
+
+        if preferred == "store_credit":
+            state["stage"] = "terminal_wait"
+            self._append_timeline(state, "Resolution", "store_credit")
+            self._save_state(req.session_id, state, status="resolved")
+            return self._resp(
+                req.session_id,
+                case_id,
+                "Store credit selected. Credit will be applied within 24 hours. Are you satisfied?",
+                "Resolved",
                 [
                     ChatControl(
                         control_type="buttons",
@@ -590,14 +932,27 @@ class ChatFlowManager:
         state["stage"] = "terminal_wait"
         self._append_timeline(state, "Resolution", f"refund={refund['amount']} rma={ret['rma_id']}")
         self._save_state(req.session_id, state, status="pending_refund")
+        resolved_msg = (
+            "Refund/return initiated. "
+            f"Amount: {refund['amount']}. RMA: {ret['rma_id']}. "
+            f"Label: {label['url']}. Are you satisfied?"
+        )
+        drafted = self.llm.draft_reply(
+            "refund_pending",
+            {
+                "reason": state["reason"],
+                "refund_amount": refund["amount"],
+                "rma_id": ret["rma_id"],
+                "label_url": label["url"],
+                "ask_satisfaction": True,
+            },
+        )
+        if drafted:
+            resolved_msg = drafted
         return self._resp(
             req.session_id,
             case_id,
-            (
-                "Refund/return initiated. "
-                f"Amount: {refund['amount']}. RMA: {ret['rma_id']}. "
-                f"Label: {label['url']}. Are you satisfied?"
-            ),
+            resolved_msg,
             "Refund Pending",
             [
                 ChatControl(

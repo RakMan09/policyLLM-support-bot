@@ -5,6 +5,7 @@ from services.agent_server.app.schemas import ChatMessageRequest, ChatStartReque
 class FakeTools:
     def __init__(self):
         self.sessions: dict[str, dict] = {}
+        self.chat_messages: dict[str, list[dict]] = {}
         self.order_status = "delivered"
         self.evidence_counter = 0
 
@@ -15,6 +16,7 @@ class FakeTools:
             "state": payload["state"],
             "status": payload["status"],
         }
+        self.chat_messages[payload["session_id"]] = []
         return self.sessions[payload["session_id"]]
 
     def get_session(self, payload):
@@ -28,7 +30,14 @@ class FakeTools:
         return s
 
     def append_chat_message(self, payload):
+        self.chat_messages[payload["session_id"]].append(
+            {"role": payload["role"], "content": payload["content"], "created_at": "2026-02-09T00:00:00+00:00"}
+        )
         return {"ok": True}
+
+    def get_chat_messages(self, payload):
+        rows = self.chat_messages.get(payload["session_id"], [])
+        return {"messages": rows[: payload.get("limit", 300)]}
 
     def list_orders(self, payload):
         return {
@@ -113,6 +122,9 @@ class FakeTools:
 
     def create_escalation(self, payload):
         return {"ticket_id": "ESC-1"}
+
+    def create_replacement(self, payload):
+        return {"replacement_id": "REP-1"}
 
     def get_case_status(self, payload):
         return {"status": "pending_refund", "eta": "2-5 business days", "refund_tracking": "TRACK-1"}
@@ -208,7 +220,17 @@ def test_damaged_flow_requires_and_validates_evidence():
     flow.message(ChatMessageRequest(session_id=start.session_id, text="", selected_order_id="ORD-1001"))
     flow.message(ChatMessageRequest(session_id=start.session_id, text="", selected_item_ids=["ITEM-1"]))
 
-    needs_upload = flow.message(ChatMessageRequest(session_id=start.session_id, text="damaged"))
+    pick_resolution = flow.message(ChatMessageRequest(session_id=start.session_id, text="damaged"))
+    assert pick_resolution.status_chip == "Awaiting User Choice"
+    assert any(c.field == "preferred_resolution" for c in pick_resolution.controls)
+
+    needs_upload = flow.message(
+        ChatMessageRequest(
+            session_id=start.session_id,
+            text="",
+            preferred_resolution="refund",
+        )
+    )
     assert needs_upload.status_chip == "Awaiting Evidence"
     assert any(c.control_type == "file_upload" for c in needs_upload.controls)
 
@@ -225,3 +247,16 @@ def test_damaged_flow_requires_and_validates_evidence():
         )
     )
     assert out.status_chip in {"Refund Pending", "Resolved"}
+
+
+def test_resume_rehydrates_controls_and_messages():
+    tools = FakeTools()
+    flow = ChatFlowManager(tools)
+    start = flow.start(ChatStartRequest(customer_identifier="alice@example.com"))
+    flow.message(ChatMessageRequest(session_id=start.session_id, text="I want refund"))
+
+    resumed = flow.resume(start.session_id)
+    assert resumed.session_id == start.session_id
+    assert resumed.case_id == start.case_id
+    assert resumed.messages
+    assert any(c.control_type == "dropdown" for c in resumed.controls)

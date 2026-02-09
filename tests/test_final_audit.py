@@ -5,7 +5,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from scripts.final_audit import scan_text_for_secrets
+from scripts.final_audit import scan_text_for_secrets, should_scan_for_secrets
 
 
 def test_secret_scan_detects_openai_style_key():
@@ -18,3 +18,8 @@ def test_secret_scan_ignores_safe_text():
     text = "customer_email_masked=al***@example.com"
     hits = scan_text_for_secrets(text)
     assert hits == []
+
+
+def test_secret_scan_excludes_tests_directory():
+    assert should_scan_for_secrets("tests/test_final_audit.py") is False
+    assert should_scan_for_secrets("services/agent_server/app/main.py") is True

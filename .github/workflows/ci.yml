@@ -33,10 +33,51 @@ jobs:
         run: |
           pytest -q
 
-  docker-smoke:
+  release-prep-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: lint-and-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+
+      - name: Release Prep (default gate enabled)
+        run: |
+          python3 scripts/release_prep.py --repo-root . --output-notes docs/RELEASE_NOTES.md
+
+      - name: Assert release artifacts exist
+        run: |
+          test -f eval/results/ship_ready_gate.json
+          test -f eval/results/model_runtime_status.json
+          test -f eval/results/model_handoff_report.json
+          test -f docs/MODEL_STATUS.md
+
+      - name: Assert gate and model handoff are OK
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          gate = json.loads(Path("eval/results/ship_ready_gate.json").read_text(encoding="utf-8"))
+          handoff = json.loads(Path("eval/results/model_handoff_report.json").read_text(encoding="utf-8"))
+          assert gate.get("ok") is True, gate
+          assert handoff.get("ok") is True, handoff
+          PY
+
+  docker-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [lint-and-test, release-prep-smoke]
 
     steps:
       - name: Checkout
@@ -63,6 +104,7 @@ jobs:
       - name: Wait and run smoke
         run: |
           python3 eval/stack_smoke.py --agent-url http://localhost:8002 --tool-url http://localhost:8001
+          python3 scripts/runtime_readiness_smoke.py --agent-url http://localhost:8002 --require-ready --output eval/results/runtime_readiness_smoke.json
 
       - name: Stop stack
         if: always()

@@ -58,6 +58,17 @@ class EscalationRecord(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
 
+class ReplacementRecord(Base):
+    __tablename__ = "replacements"
+    __table_args__ = (UniqueConstraint("idempotency_key", name="uq_replacements_idempotency"),)
+
+    replacement_id: Mapped[str] = mapped_column(String, primary_key=True)
+    idempotency_key: Mapped[str] = mapped_column(String, nullable=False)
+    order_id: Mapped[str] = mapped_column(String, nullable=False)
+    item_id: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
 

@@ -12,6 +12,12 @@ Evaluate **20-30 chat transcripts** total (recommended split):
 
 Use transcripts exported by:
 - `eval/conversation_eval.py` (`eval/results/conversation_transcripts.jsonl`)
+- optional packet builder (recommended):
+  - `python3 eval/build_human_eval_packet.py --transcripts eval/results/conversation_transcripts.jsonl --sample-size 24`
+  - outputs:
+    - `eval/results/human_eval_packet.jsonl`
+    - `eval/results/human_eval_sheet.csv`
+    - `eval/results/human_eval_packet_summary.json`
 
 For adversarial cases, use prompts from:
 - `eval/safety_suite.py`

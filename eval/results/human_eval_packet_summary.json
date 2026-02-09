@@ -1,0 +1,12 @@
+{
+  "input_rows": 3,
+  "sampled_rows": 3,
+  "sample_size_requested": 24,
+  "status_distribution": {
+    "Denied": 1,
+    "Escalated": 1,
+    "Refund Pending": 1
+  },
+  "packet_output": "eval/results/human_eval_packet.jsonl",
+  "sheet_output": "eval/results/human_eval_sheet.csv"
+}

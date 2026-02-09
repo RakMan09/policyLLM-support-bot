@@ -27,5 +27,12 @@ Snapshot from local evaluation artifacts.
 - ok: True
 - warnings: 0
 
+## Model Runtime
+- mode: hybrid
+- enabled: True
+- ready: True
+- adapter_dir: models/dpo_qlora/adapter
+- missing_artifacts: None
+
 ## Notes
 - Refresh this file after rerunning eval suites and final audit.

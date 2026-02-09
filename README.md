@@ -4,7 +4,7 @@ Multi-turn, policy-grounded Refund/Returns chatbot portfolio project.
 
 This repo now supports a stateful conversational UX (session-based) and is being expanded checkpoint-by-checkpoint to full end-to-end training/eval/guardrails.
 
-## Current Scope (Checkpoint 17 of multi-turn upgrade)
+## Current Scope (Checkpoint 18 of multi-turn upgrade)
 Implemented conversational flow + evidence pipeline + eval + training data + CI + release prep + portfolio artifacts + release gate + optional live-demo release mode:
 - Postgres-backed chat sessions and state memory
 - Guided chatbot controls (dropdowns, multiselect, buttons, upload placeholder)
@@ -21,8 +21,9 @@ Implemented conversational flow + evidence pipeline + eval + training data + CI 
 - New chat endpoints:
   - `POST /chat/start`
   - `POST /chat/message`
+  - `POST /chat/resume`
   - `POST /chat/create_test_order`
-- Streamlit chat UI with timeline panel + create-test-order panel + real image upload
+- Streamlit chat UI with timeline panel + create-test-order panel + real image upload + model runtime panel
 - Expanded case handling paths:
   - refund request
   - return request
@@ -71,7 +72,7 @@ Implemented conversational flow + evidence pipeline + eval + training data + CI 
 - Release prep automation:
   - `scripts/release_prep.py` runs final audit + metrics snapshot + release bundle + filled release notes
 - Demo scenarios automation:
-  - `scripts/demo_scenarios.py` runs deterministic multi-turn demos (damaged+evidence, escalation, cancel-processing)
+  - `scripts/demo_scenarios.py` runs deterministic multi-turn demos (damaged+evidence, escalation, cancel-processing, session resume)
   - outputs `eval/results/demo_scenarios.json` for portfolio evidence/screenshots
 - Portfolio report automation:
   - `scripts/generate_portfolio_report.py` builds `docs/PORTFOLIO_REPORT.md` from latest artifacts/metrics
@@ -86,10 +87,32 @@ Implemented conversational flow + evidence pipeline + eval + training data + CI 
   - `.github/ISSUE_TEMPLATE/feature_request.md`
 - Ship-ready release gate:
   - `scripts/ship_ready_gate.py` checks required release artifacts exist and are fresh
+  - also validates `eval/results/demo_scenarios.json` contains required scenarios, including `resume_session`
+  - validates model artifacts semantically: `model_runtime_status` fields present and `model_handoff_report.ok=true`
   - outputs `eval/results/ship_ready_gate.json`
 - Release prep full mode:
   - `scripts/release_prep.py --run-demo --agent-url ...` regenerates demo scenarios before packaging
+  - `scripts/release_prep.py --run-demo --run-runtime-smoke --runtime-smoke-require-ready --agent-url ...` adds live runtime handoff smoke and requires it in gate
   - useful for final demo-first portfolio release refresh
+- LLM runtime readiness probe:
+  - `GET /chat/model/status` reports adapter readiness for local serving handoff after Colab training
+  - controlled by `.env` vars: `AGENT_MODE`, `LLM_MODEL_ID`, `LLM_ADAPTER_DIR`, `LLM_DEVICE`, `LLM_DTYPE`
+  - modes:
+    - `AGENT_MODE=deterministic`: policy/state-machine only, no model inference
+    - `AGENT_MODE=hybrid`: try LLM-assisted reason extraction/reply drafting, fallback safely
+    - `AGENT_MODE=llm`: require LLM inference, fail fast on load/inference errors
+- Model status snapshot automation:
+  - `scripts/generate_model_status_snapshot.py` writes:
+    - `eval/results/model_runtime_status.json`
+    - `docs/MODEL_STATUS.md`
+  - integrated into `scripts/release_prep.py`, metrics snapshot, and ship-ready gating
+- Model handoff verification:
+  - `scripts/verify_model_handoff.py` validates runtime snapshot consistency for release handoff
+  - writes `eval/results/model_handoff_report.json`
+  - integrated into `scripts/release_prep.py` and ship-ready gating
+- Docker compose hardening:
+  - stack can boot even when `.env` is missing (safe defaults + optional env file)
+  - better CI portability for docker-smoke
 - GitHub publishing playbook:
   - `docs/GITHUB_SETUP.md`
 
@@ -160,6 +183,8 @@ python3 eval/eval_harness.py --dataset data/processed/synthetic_cases_test.jsonl
 python3 eval/conversation_eval.py --agent-url http://localhost:8002 --output eval/results/conversation_eval_report.json --transcripts-output eval/results/conversation_transcripts.jsonl
 python3 eval/safety_suite.py --agent-url http://localhost:8002 --output eval/results/safety_report.json
 python3 eval/stack_smoke.py --agent-url http://localhost:8002 --tool-url http://localhost:8001
+python3 scripts/runtime_readiness_smoke.py --agent-url http://localhost:8002 --require-ready --output eval/results/runtime_readiness_smoke.json
+python3 eval/build_human_eval_packet.py --transcripts eval/results/conversation_transcripts.jsonl --sample-size 24 --packet-output eval/results/human_eval_packet.jsonl --sheet-output eval/results/human_eval_sheet.csv --summary-output eval/results/human_eval_packet_summary.json
 ```
 
 Build conversation training data:
@@ -206,6 +231,8 @@ pytest -q
 
 ## GitHub + Release
 - CI workflow: `.github/workflows/ci.yml`
+  - includes `release-prep-smoke` job to validate `scripts/release_prep.py` (default ship-ready gate enabled)
+  - asserts `model_runtime_status`, `model_handoff_report`, and gate `ok=true` in CI
 - Release checklist: `docs/RELEASE_CHECKLIST.md`
 - Colab runbook: `docs/COLAB_RUNBOOK.md`
 - GitHub setup guide: `docs/GITHUB_SETUP.md`

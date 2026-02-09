@@ -85,6 +85,7 @@ class ChatMessageRequest(BaseModel):
     selected_order_id: str | None = None
     selected_item_ids: list[str] = Field(default_factory=list)
     reason: str | None = None
+    preferred_resolution: Literal["refund", "return", "replacement", "store_credit"] | None = None
     evidence_uploaded: bool = False
     evidence_file_name: str | None = None
     evidence_mime_type: str | None = None
@@ -102,6 +103,20 @@ class ChatMessageResponse(BaseModel):
     timeline: list[dict[str, Any]]
 
 
+class ChatResumeRequest(BaseModel):
+    session_id: str
+
+
+class ChatResumeResponse(BaseModel):
+    session_id: str
+    case_id: str
+    assistant_message: str
+    status_chip: str
+    controls: list[ChatControl]
+    timeline: list[dict[str, Any]]
+    messages: list[dict[str, str]]
+
+
 class CreateTestOrderRequest(BaseModel):
     customer_email: str
     customer_phone_last4: str = Field(min_length=4, max_length=4)
@@ -109,10 +124,23 @@ class CreateTestOrderRequest(BaseModel):
     quantity: int = Field(default=1, ge=1, le=20)
     price: Decimal = Field(default=Decimal("49.99"))
     shipping_fee: Decimal = Field(default=Decimal("5.00"))
-    status: Literal["processing", "shipped", "delivered"] = "processing"
     item_category: str = "electronics"
     delivery_date: str | None = None
 
 
 class CreateTestOrderResponse(BaseModel):
     order_id: str
+
+
+class OrdersTableResponse(BaseModel):
+    orders: list[dict[str, Any]]
+
+
+class ModelStatusResponse(BaseModel):
+    mode: str
+    model_id: str
+    adapter_dir: str
+    ready: bool
+    missing_artifacts: list[str]
+    enabled: bool = False
+    load_error: str | None = None

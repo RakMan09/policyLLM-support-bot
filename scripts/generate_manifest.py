@@ -7,6 +7,7 @@ from pathlib import Path
 
 DEFAULT_FILES = [
     "docs/METRICS.md",
+    "docs/MODEL_STATUS.md",
     "docs/RELEASE_SUMMARY.md",
     "docs/RELEASE_NOTES.md",
     "docs/PORTFOLIO_REPORT.md",
@@ -14,6 +15,8 @@ DEFAULT_FILES = [
     "eval/results/conversation_eval_report.json",
     "eval/results/safety_report.json",
     "eval/results/final_audit_report.json",
+    "eval/results/model_runtime_status.json",
+    "eval/results/model_handoff_report.json",
     "eval/results/demo_scenarios.json",
 ]
 

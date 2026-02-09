@@ -52,6 +52,14 @@ class ListOrdersResponse(BaseModel):
     orders: list[OrderSummary]
 
 
+class ListAllOrdersRequest(BaseModel):
+    limit: int = Field(default=200, ge=1, le=1000)
+
+
+class ListAllOrdersResponse(BaseModel):
+    orders: list[OrderSummary]
+
+
 class ListOrderItemsRequest(BaseModel):
     order_id: str
 
@@ -105,6 +113,21 @@ class AppendChatMessageRequest(BaseModel):
     session_id: str
     role: Literal["user", "assistant", "system"]
     content: str
+
+
+class GetChatMessagesRequest(BaseModel):
+    session_id: str
+    limit: int = Field(default=300, ge=1, le=2000)
+
+
+class ChatMessageRecord(BaseModel):
+    role: str
+    content: str
+    created_at: str
+
+
+class GetChatMessagesResponse(BaseModel):
+    messages: list[ChatMessageRecord]
 
 
 class GetPolicyRequest(BaseModel):
@@ -183,6 +206,15 @@ class CreateEscalationResponse(BaseModel):
     ticket_id: str
 
 
+class CreateReplacementRequest(BaseModel):
+    order_id: str
+    item_id: str
+
+
+class CreateReplacementResponse(BaseModel):
+    replacement_id: str
+
+
 class CreateTestOrderRequest(BaseModel):
     customer_email: EmailStr
     customer_phone_last4: str = Field(min_length=4, max_length=4)
@@ -191,7 +223,6 @@ class CreateTestOrderRequest(BaseModel):
     item_category: str
     price: Decimal = Field(default=Decimal("49.99"), gt=Decimal("0"))
     shipping_fee: Decimal = Field(default=Decimal("5.00"), ge=Decimal("0"))
-    status: Literal["processing", "shipped", "delivered"] = "processing"
     delivery_date: date | None = None
 
 

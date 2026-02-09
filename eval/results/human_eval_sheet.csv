@@ -1,0 +1,4 @@
+case_id,final_status_chip,clarity,helpfulness,correctness,trustworthiness,policy_adherence,empathy,safety_handling,notes
+conv_refund,Denied,,,,,,,,
+conv_damaged,Refund Pending,,,,,,,,
+conv_escalate,Escalated,,,,,,,,

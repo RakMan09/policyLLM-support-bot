@@ -92,7 +92,6 @@ def run_cancel(agent_url: str) -> dict[str, Any]:
             "item_category": "electronics",
             "price": "29.99",
             "shipping_fee": "5.00",
-            "status": "processing",
             "delivery_date": None,
         },
     )
@@ -121,6 +120,24 @@ def run_cancel(agent_url: str) -> dict[str, Any]:
     }
 
 
+def run_resume(agent_url: str) -> dict[str, Any]:
+    out: list[dict[str, Any]] = []
+    s = _start(agent_url)
+    sid = s["session_id"]
+    out.append({"role": "assistant", "payload": s})
+    m1 = post(agent_url, "/chat/message", {"session_id": sid, "text": "alice@example.com"})
+    out.append({"role": "assistant", "payload": m1})
+    resumed = post(agent_url, "/chat/resume", {"session_id": sid})
+    out.append({"role": "assistant", "payload": resumed})
+    return {
+        "scenario": "resume_session",
+        "session_id": sid,
+        "messages": out,
+        "resume_status_chip": resumed.get("status_chip"),
+        "resume_message_count": len(resumed.get("messages", [])),
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run deterministic demo chat scenarios.")
     parser.add_argument("--agent-url", default="http://localhost:8002")
@@ -138,6 +155,7 @@ def main() -> None:
         run_damaged(args.agent_url),
         run_escalation(args.agent_url),
         run_cancel(args.agent_url),
+        run_resume(args.agent_url),
     ]
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps({"scenarios": results}, ensure_ascii=True, indent=2), encoding="utf-8")

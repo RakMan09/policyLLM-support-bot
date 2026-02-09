@@ -45,7 +45,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--output-notes", type=Path, default=Path("docs/RELEASE_NOTES.md"))
     parser.add_argument("--skip-audit", action="store_true")
+    parser.add_argument("--skip-gate", action="store_true")
+    parser.add_argument("--gate-max-age-hours", type=float, default=168.0)
     parser.add_argument("--run-demo", action="store_true")
+    parser.add_argument("--run-runtime-smoke", action="store_true")
+    parser.add_argument("--runtime-smoke-require-ready", action="store_true")
     parser.add_argument("--agent-url", default="http://localhost:8002")
     return parser.parse_args()
 
@@ -68,7 +72,39 @@ def main() -> None:
                 "eval/results/demo_scenarios.json",
             ]
         )
+    if args.run_runtime_smoke:
+        cmd = [
+            "python3",
+            "scripts/runtime_readiness_smoke.py",
+            "--agent-url",
+            args.agent_url,
+            "--output",
+            "eval/results/runtime_readiness_smoke.json",
+        ]
+        if args.runtime_smoke_require_ready:
+            cmd.append("--require-ready")
+        run(cmd)
 
+    run(
+        [
+            "python3",
+            "scripts/generate_model_status_snapshot.py",
+            "--json-output",
+            "eval/results/model_runtime_status.json",
+            "--md-output",
+            "docs/MODEL_STATUS.md",
+        ]
+    )
+    run(
+        [
+            "python3",
+            "scripts/verify_model_handoff.py",
+            "--snapshot",
+            "eval/results/model_runtime_status.json",
+            "--output",
+            "eval/results/model_handoff_report.json",
+        ]
+    )
     run(
         [
             "python3",
@@ -81,6 +117,8 @@ def main() -> None:
             "eval/results/safety_report.json",
             "--audit-report",
             "eval/results/final_audit_report.json",
+            "--model-status-report",
+            "eval/results/model_runtime_status.json",
             "--output",
             "docs/METRICS.md",
         ]
@@ -118,6 +156,20 @@ def main() -> None:
             "docs/RELEASE_SUMMARY.md",
         ]
     )
+    if not args.skip_gate:
+        gate_cmd = [
+            "python3",
+            "scripts/ship_ready_gate.py",
+            "--repo-root",
+            ".",
+            "--max-age-hours",
+            str(args.gate_max_age_hours),
+            "--output",
+            "eval/results/ship_ready_gate.json",
+        ]
+        if args.run_runtime_smoke:
+            gate_cmd.append("--require-runtime-smoke")
+        run(gate_cmd)
     print(json.dumps({"release_notes": str(args.output_notes), "bundle_dir": "dist"}, ensure_ascii=True))
 
 

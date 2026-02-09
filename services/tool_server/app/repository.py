@@ -5,7 +5,7 @@ from hashlib import sha256
 from pathlib import Path
 from uuid import uuid4
 
-from sqlalchemy import create_engine, select
+from sqlalchemy import case, create_engine, select, update
 from sqlalchemy.orm import sessionmaker
 
 from services.tool_server.app.models import (
@@ -17,6 +17,7 @@ from services.tool_server.app.models import (
     EscalationRecord,
     LabelRecord,
     Order,
+    ReplacementRecord,
     ReturnRecord,
     ToolCallLog,
 )
@@ -44,6 +45,18 @@ class Repository:
     def create_tables(self) -> None:
         Base.metadata.create_all(self.engine)
         self._seed_orders_if_empty()
+        self._repair_delivered_orders()
+
+    def _repair_delivered_orders(self) -> None:
+        with self.session_factory() as session:
+            stmt = (
+                update(Order)
+                .where(Order.status == "delivered")
+                .where(Order.delivery_date.is_(None))
+                .values(delivery_date=Order.order_date)
+            )
+            session.execute(stmt)
+            session.commit()
 
     def _seed_orders_if_empty(self) -> None:
         with self.session_factory() as session:
@@ -101,7 +114,14 @@ class Repository:
                 q = select(Order).where(Order.customer_email == customer_identifier)
             else:
                 q = select(Order).where(Order.customer_phone_last4 == customer_identifier)
+            delivered_first = case((Order.status == "delivered", 1), else_=0)
+            q = q.order_by(delivered_first.desc(), Order.order_date.desc(), Order.order_id.desc())
             return list(session.scalars(q.limit(50)).all())
+
+    def list_all_orders(self, limit: int = 200) -> list[Order]:
+        with self.session_factory() as session:
+            q = select(Order).order_by(Order.order_date.desc(), Order.order_id.desc())
+            return list(session.scalars(q.limit(limit)).all())
 
     def list_order_items(self, order_id: str) -> list[Order]:
         with self.session_factory() as session:
@@ -155,6 +175,16 @@ class Repository:
             )
             session.add(row)
             session.commit()
+
+    def get_chat_messages(self, session_id: str, limit: int = 300) -> list[ChatMessage]:
+        with self.session_factory() as session:
+            q = (
+                select(ChatMessage)
+                .where(ChatMessage.session_id == session_id)
+                .order_by(ChatMessage.created_at.asc(), ChatMessage.id.asc())
+                .limit(limit)
+            )
+            return list(session.scalars(q).all())
 
     def create_return(self, order_id: str, item_id: str, method: str) -> str:
         key = f"{order_id}:{item_id}:{method}"
@@ -219,6 +249,30 @@ class Repository:
             session.commit()
             return ticket_id
 
+    def create_replacement(self, order_id: str, item_id: str) -> str:
+        key = f"{order_id}:{item_id}"
+        with self.session_factory() as session:
+            existing = session.scalar(
+                select(ReplacementRecord)
+                .where(ReplacementRecord.idempotency_key == key)
+                .limit(1)
+            )
+            if existing:
+                return existing.replacement_id
+
+            digest = sha256(key.encode("utf-8")).hexdigest()[:12]
+            replacement_id = f"REP-{digest.upper()}"
+            row = ReplacementRecord(
+                replacement_id=replacement_id,
+                idempotency_key=key,
+                order_id=order_id,
+                item_id=item_id,
+                created_at=_utcnow_naive(),
+            )
+            session.add(row)
+            session.commit()
+            return replacement_id
+
     def create_test_order(
         self,
         *,
@@ -227,12 +281,12 @@ class Repository:
         item_category: str,
         price: str,
         shipping_fee: str,
-        status: str,
         delivery_date,
     ) -> str:
         order_id = f"ORD-{uuid4().hex[:10].upper()}"
         item_id = f"ITEM-{uuid4().hex[:8].upper()}"
         merchant_id = "M-TEST"
+        resolved_delivery_date = delivery_date or _utcnow_naive().date()
         with self.session_factory() as session:
             row = Order(
                 order_id=order_id,
@@ -242,22 +296,31 @@ class Repository:
                 item_id=item_id,
                 item_category=item_category,
                 order_date=_utcnow_naive().date(),
-                delivery_date=delivery_date,
+                delivery_date=resolved_delivery_date,
                 item_price=price,
                 shipping_fee=shipping_fee,
-                status=status,
+                status="delivered",
             )
             session.add(row)
             session.commit()
         return order_id
 
     def get_case_status(self, case_id: str) -> tuple[str, str | None, str | None]:
+        suffix = "".join(ch for ch in case_id[-6:].upper() if ch.isalnum()) or "000000"
         with self.session_factory() as session:
             s = session.scalar(select(ChatSession).where(ChatSession.case_id == case_id).limit(1))
             if s is None:
                 return "not_found", None, None
-            if s.status in {"resolved", "pending_refund", "pending_return"}:
-                return s.status, "2-5 business days", f"TRACK-{case_id[-6:].upper()}"
+            if s.status == "pending_refund":
+                return s.status, "2-5 business days", f"RFND-{suffix}"
+            if s.status == "pending_return":
+                return s.status, "2-5 business days", f"RETN-{suffix}"
+            if s.status == "pending_replacement":
+                return s.status, "3-7 business days", f"REPL-{suffix}"
+            if s.status == "escalated":
+                return s.status, "24-48 hours", f"ESC-{suffix}"
+            if s.status == "resolved":
+                return s.status, "completed", f"DONE-{suffix}"
             return s.status, None, None
 
     def upload_evidence(

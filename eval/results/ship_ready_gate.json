@@ -1,7 +1,8 @@
 {
   "ok": true,
-  "required_count": 10,
-  "present_count": 10,
+  "required_count": 14,
+  "present_count": 14,
   "missing": [],
-  "stale": []
+  "stale": [],
+  "content_issues": []
 }

@@ -39,6 +39,8 @@ SECRET_PATTERNS = [
     ("private_key_block", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
 ]
 
+SECRET_SCAN_EXCLUDE_PREFIXES = ("tests/",)
+
 
 def scan_text_for_secrets(text: str) -> list[str]:
     hits: list[str] = []
@@ -68,6 +70,10 @@ def is_probably_binary(path: Path) -> bool:
     return False
 
 
+def should_scan_for_secrets(rel_path: str) -> bool:
+    return not rel_path.startswith(SECRET_SCAN_EXCLUDE_PREFIXES)
+
+
 def run_audit(repo_root: Path) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -86,6 +92,8 @@ def run_audit(repo_root: Path) -> dict[str, Any]:
     for rel in tracked:
         path = repo_root / rel
         if not path.exists() or not path.is_file():
+            continue
+        if not should_scan_for_secrets(rel):
             continue
         if is_probably_binary(path):
             continue

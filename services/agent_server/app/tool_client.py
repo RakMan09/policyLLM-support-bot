@@ -24,6 +24,9 @@ class ToolClient:
     def list_orders(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post("/tools/list_orders", payload)
 
+    def list_all_orders(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self._post("/tools/list_all_orders", payload)
+
     def list_order_items(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post("/tools/list_order_items", payload)
 
@@ -45,6 +48,9 @@ class ToolClient:
     def append_chat_message(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post("/tools/append_chat_message", payload)
 
+    def get_chat_messages(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self._post("/tools/get_chat_messages", payload)
+
     def get_policy(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post("/tools/get_policy", payload)
 
@@ -62,6 +68,9 @@ class ToolClient:
 
     def create_escalation(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post("/tools/create_escalation", payload)
+
+    def create_replacement(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return self._post("/tools/create_replacement", payload)
 
     def create_test_order(self, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post("/tools/create_test_order", payload)

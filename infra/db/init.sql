@@ -37,6 +37,14 @@ CREATE TABLE IF NOT EXISTS escalations (
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS replacements (
+  replacement_id TEXT PRIMARY KEY,
+  idempotency_key TEXT UNIQUE NOT NULL,
+  order_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS chat_sessions (
   session_id TEXT PRIMARY KEY,
   case_id TEXT NOT NULL,

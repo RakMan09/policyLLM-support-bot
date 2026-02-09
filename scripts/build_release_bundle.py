@@ -12,6 +12,7 @@ DEFAULT_INCLUDE = [
     "README.md",
     "LICENSE",
     "docs/METRICS.md",
+    "docs/MODEL_STATUS.md",
     "docs/PORTFOLIO_REPORT.md",
     "docs/RELEASE_NOTES.md",
     "docs/RELEASE_CHECKLIST.md",
@@ -23,6 +24,8 @@ DEFAULT_INCLUDE = [
     "eval/results/conversation_eval_report.json",
     "eval/results/safety_report.json",
     "eval/results/final_audit_report.json",
+    "eval/results/model_runtime_status.json",
+    "eval/results/model_handoff_report.json",
 ]
 
 

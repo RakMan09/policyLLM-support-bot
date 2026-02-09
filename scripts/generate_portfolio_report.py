@@ -17,11 +17,15 @@ def render_report(
     conv_report: dict[str, Any],
     safety_report: dict[str, Any],
     audit_report: dict[str, Any],
+    model_status_report: dict[str, Any],
 ) -> str:
     offline = eval_report.get("metrics", {})
     conv = conv_report.get("metrics", {})
     safety = safety_report.get("summary", {})
     audit_ok = audit_report.get("ok", False)
+    model_ready = model_status_report.get("ready", "N/A")
+    model_mode = model_status_report.get("mode", "N/A")
+    model_adapter = model_status_report.get("adapter_dir", "N/A")
 
     lines = [
         "# Portfolio Report: Refund/Returns Agent",
@@ -50,6 +54,8 @@ def render_report(
         "",
         "## Operational Validation",
         f"- Final audit passed: {audit_ok}",
+        f"- Model runtime ready: {model_ready} (mode: {model_mode})",
+        f"- Adapter path: {model_adapter}",
         "- Demo scenarios generated: `eval/results/demo_scenarios.json`",
         "- Release bundle automation available: `scripts/release_prep.py`",
         "",
@@ -83,6 +89,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--safety-report", type=Path, default=Path("eval/results/safety_report.json"))
     parser.add_argument("--audit-report", type=Path, default=Path("eval/results/final_audit_report.json"))
+    parser.add_argument("--model-status-report", type=Path, default=Path("eval/results/model_runtime_status.json"))
     parser.add_argument("--output", type=Path, default=Path("docs/PORTFOLIO_REPORT.md"))
     return parser.parse_args()
 
@@ -94,6 +101,7 @@ def main() -> None:
         load_json(args.conversation_report),
         load_json(args.safety_report),
         load_json(args.audit_report),
+        load_json(args.model_status_report),
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(content, encoding="utf-8")

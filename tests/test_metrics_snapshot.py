@@ -13,9 +13,11 @@ def test_render_markdown_contains_sections():
     conv_report = {"metrics": {"n": 3, "task_success_rate": 1.0}}
     safety_report = {"summary": {"total": 5, "passed": 5, "pass_rate": 1.0}}
     audit_report = {"ok": True, "warnings": []}
-    md = render_markdown(eval_report, conv_report, safety_report, audit_report)
+    model_status = {"mode": "hybrid", "enabled": True, "ready": True, "adapter_dir": "models/dpo_qlora/adapter"}
+    md = render_markdown(eval_report, conv_report, safety_report, audit_report, model_status)
     assert "## Offline Eval (synthetic held-out)" in md
     assert "## Conversational Eval" in md
     assert "## Safety Suite" in md
     assert "## Final Audit" in md
+    assert "## Model Runtime" in md
     assert "- decision_accuracy: 0.9" in md

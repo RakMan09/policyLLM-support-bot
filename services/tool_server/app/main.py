@@ -1,6 +1,7 @@
 import logging
 import time
 from contextlib import asynccontextmanager
+from datetime import timezone
 from typing import Any, Callable, TypeVar
 
 from fastapi import FastAPI, HTTPException
@@ -20,11 +21,15 @@ from services.tool_server.app.schemas import (
     CreateEscalationResponse,
     CreateLabelRequest,
     CreateLabelResponse,
+    CreateReplacementRequest,
+    CreateReplacementResponse,
     CreateReturnRequest,
     CreateReturnResponse,
     CreateSessionRequest,
     CreateTestOrderRequest,
     CreateTestOrderResponse,
+    GetChatMessagesRequest,
+    GetChatMessagesResponse,
     GetEvidenceRequest,
     GetEvidenceResponse,
     GetCaseStatusRequest,
@@ -32,6 +37,8 @@ from services.tool_server.app.schemas import (
     GetPolicyRequest,
     GetPolicyResponse,
     GetSessionRequest,
+    ListAllOrdersRequest,
+    ListAllOrdersResponse,
     ListOrderItemsRequest,
     ListOrderItemsResponse,
     ListOrdersRequest,
@@ -156,6 +163,25 @@ def list_orders(request: ListOrdersRequest) -> ListOrdersResponse:
     return run_with_logging("list_orders", request, _run)
 
 
+@app.post("/tools/list_all_orders", response_model=ListAllOrdersResponse)
+def list_all_orders(request: ListAllOrdersRequest) -> ListAllOrdersResponse:
+    def _run() -> ListAllOrdersResponse:
+        rows = repo.list_all_orders(limit=request.limit)
+        return ListAllOrdersResponse(
+            orders=[
+                OrderSummary(
+                    order_id=r.order_id,
+                    status=r.status,
+                    order_date=r.order_date,
+                    delivery_date=r.delivery_date,
+                )
+                for r in rows
+            ]
+        )
+
+    return run_with_logging("list_all_orders", request, _run)
+
+
 @app.post("/tools/list_order_items", response_model=ListOrderItemsResponse)
 def list_order_items(request: ListOrderItemsRequest) -> ListOrderItemsResponse:
     def _run() -> ListOrderItemsResponse:
@@ -242,6 +268,24 @@ def append_chat_message(request: AppendChatMessageRequest) -> dict:
     return {"ok": True}
 
 
+@app.post("/tools/get_chat_messages", response_model=GetChatMessagesResponse)
+def get_chat_messages(request: GetChatMessagesRequest) -> GetChatMessagesResponse:
+    def _run() -> GetChatMessagesResponse:
+        rows = repo.get_chat_messages(request.session_id, limit=request.limit)
+        return GetChatMessagesResponse(
+            messages=[
+                {
+                    "role": r.role,
+                    "content": r.content,
+                    "created_at": r.created_at.replace(tzinfo=timezone.utc).isoformat(),
+                }
+                for r in rows
+            ]
+        )
+
+    return run_with_logging("get_chat_messages", request, _run)
+
+
 @app.post("/tools/create_test_order", response_model=CreateTestOrderResponse)
 def create_test_order(request: CreateTestOrderRequest) -> CreateTestOrderResponse:
     def _run() -> CreateTestOrderResponse:
@@ -251,7 +295,6 @@ def create_test_order(request: CreateTestOrderRequest) -> CreateTestOrderRespons
             item_category=request.item_category,
             price=str(request.price),
             shipping_fee=str(request.shipping_fee),
-            status=request.status,
             delivery_date=request.delivery_date,
         )
         return CreateTestOrderResponse(order_id=oid)
@@ -380,6 +423,15 @@ def create_escalation_endpoint(request: CreateEscalationRequest) -> CreateEscala
         return CreateEscalationResponse(ticket_id=ticket_id)
 
     return run_with_logging("create_escalation", request, _run)
+
+
+@app.post("/tools/create_replacement", response_model=CreateReplacementResponse)
+def create_replacement_endpoint(request: CreateReplacementRequest) -> CreateReplacementResponse:
+    def _run() -> CreateReplacementResponse:
+        replacement_id = repo.create_replacement(order_id=request.order_id, item_id=request.item_id)
+        return CreateReplacementResponse(replacement_id=replacement_id)
+
+    return run_with_logging("create_replacement", request, _run)
 
 
 @app.exception_handler(Exception)

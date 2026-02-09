@@ -24,6 +24,8 @@
 
 ## Operational Validation
 - Final audit passed: True
+- Model runtime ready: True (mode: hybrid)
+- Adapter path: models/dpo_qlora/adapter
 - Demo scenarios generated: `eval/results/demo_scenarios.json`
 - Release bundle automation available: `scripts/release_prep.py`
 

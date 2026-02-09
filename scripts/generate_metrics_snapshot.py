@@ -27,10 +27,13 @@ def render_markdown(
     conversation_report: dict[str, Any],
     safety_report: dict[str, Any],
     audit_report: dict[str, Any],
+    model_status_report: dict[str, Any],
 ) -> str:
     offline = _get_metrics(eval_report)
     conversation = _get_metrics(conversation_report)
     safety = _get_metrics(safety_report)
+    missing_artifacts = model_status_report.get("missing_artifacts", [])
+    missing_text = ", ".join(missing_artifacts) if isinstance(missing_artifacts, list) and missing_artifacts else "None"
 
     lines = [
         "# Current Metrics",
@@ -62,6 +65,13 @@ def render_markdown(
         f"- ok: {audit_report.get('ok', 'N/A')}",
         f"- warnings: {len(audit_report.get('warnings', [])) if isinstance(audit_report.get('warnings'), list) else 'N/A'}",
         "",
+        "## Model Runtime",
+        f"- mode: {model_status_report.get('mode', 'N/A')}",
+        f"- enabled: {model_status_report.get('enabled', 'N/A')}",
+        f"- ready: {model_status_report.get('ready', 'N/A')}",
+        f"- adapter_dir: {model_status_report.get('adapter_dir', 'N/A')}",
+        f"- missing_artifacts: {missing_text}",
+        "",
         "## Notes",
         "- Refresh this file after rerunning eval suites and final audit.",
     ]
@@ -90,6 +100,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("eval/results/final_audit_report.json"),
     )
+    parser.add_argument(
+        "--model-status-report",
+        type=Path,
+        default=Path("eval/results/model_runtime_status.json"),
+    )
     parser.add_argument("--output", type=Path, default=Path("docs/METRICS.md"))
     return parser.parse_args()
 
@@ -101,6 +116,7 @@ def main() -> None:
         load_json(args.conversation_report),
         load_json(args.safety_report),
         load_json(args.audit_report),
+        load_json(args.model_status_report),
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(md, encoding="utf-8")

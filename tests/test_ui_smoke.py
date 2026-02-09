@@ -12,5 +12,8 @@ def test_ui_file_exists_and_has_chat_features():
     content = p.read_text(encoding="utf-8")
     assert "Refund Returns Chatbot" in content
     assert "Start New Chat" in content
+    assert "Resume Session" in content
+    assert "Model Runtime" in content
+    assert "Refresh Model Status" in content
     assert "Create Test Order" in content
     assert "Timeline" in content

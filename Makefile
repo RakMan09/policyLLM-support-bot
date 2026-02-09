@@ -27,11 +27,17 @@ eval:
 conversation-eval:
 	python3 eval/conversation_eval.py --agent-url http://localhost:8002 --output eval/results/conversation_eval_report.json --transcripts-output eval/results/conversation_transcripts.jsonl
 
+human-eval-packet:
+	python3 eval/build_human_eval_packet.py --transcripts eval/results/conversation_transcripts.jsonl --sample-size 24 --packet-output eval/results/human_eval_packet.jsonl --sheet-output eval/results/human_eval_sheet.csv --summary-output eval/results/human_eval_packet_summary.json
+
 safety:
 	python3 eval/safety_suite.py --agent-url http://localhost:8002 --output eval/results/safety_report.json
 
 stack-smoke:
 	python3 eval/stack_smoke.py --agent-url http://localhost:8002 --tool-url http://localhost:8001
+
+runtime-readiness-smoke:
+	python3 scripts/runtime_readiness_smoke.py --agent-url http://localhost:8002 --require-ready --output eval/results/runtime_readiness_smoke.json
 
 build-conversation-data:
 	python3 pipelines/build_conversation_dataset.py --train-cases data/processed/synthetic_cases_train.jsonl --val-cases data/processed/synthetic_cases_val.jsonl --output-sft-train data/processed/conversation_sft_train.jsonl --output-sft-val data/processed/conversation_sft_val.jsonl --output-dpo-train data/processed/conversation_dpo_pairs_train.jsonl
@@ -67,7 +73,13 @@ final-audit:
 	python3 scripts/final_audit.py --output eval/results/final_audit_report.json
 
 metrics-snapshot:
-	python3 scripts/generate_metrics_snapshot.py --eval-report eval/results/eval_report.json --conversation-report eval/results/conversation_eval_report.json --safety-report eval/results/safety_report.json --audit-report eval/results/final_audit_report.json --output docs/METRICS.md
+	python3 scripts/generate_metrics_snapshot.py --eval-report eval/results/eval_report.json --conversation-report eval/results/conversation_eval_report.json --safety-report eval/results/safety_report.json --audit-report eval/results/final_audit_report.json --model-status-report eval/results/model_runtime_status.json --output docs/METRICS.md
+
+model-status-snapshot:
+	python3 scripts/generate_model_status_snapshot.py --json-output eval/results/model_runtime_status.json --md-output docs/MODEL_STATUS.md
+
+model-handoff-check:
+	python3 scripts/verify_model_handoff.py --snapshot eval/results/model_runtime_status.json --output eval/results/model_handoff_report.json
 
 release-bundle:
 	python3 scripts/build_release_bundle.py --repo-root . --output-dir dist --release-summary docs/RELEASE_SUMMARY.md
@@ -77,6 +89,12 @@ release-prep:
 
 release-prep-full:
 	python3 scripts/release_prep.py --repo-root . --output-notes docs/RELEASE_NOTES.md --run-demo --agent-url http://localhost:8002
+
+release-prep-live:
+	python3 scripts/release_prep.py --repo-root . --output-notes docs/RELEASE_NOTES.md --run-demo --run-runtime-smoke --runtime-smoke-require-ready --agent-url http://localhost:8002
+
+release-prep-no-gate:
+	python3 scripts/release_prep.py --repo-root . --output-notes docs/RELEASE_NOTES.md --skip-gate
 
 demo-scenarios:
 	python3 scripts/demo_scenarios.py --agent-url http://localhost:8002 --output eval/results/demo_scenarios.json

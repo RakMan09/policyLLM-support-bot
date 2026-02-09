@@ -4,6 +4,7 @@ import logging
 from typing import Any
 
 from services.agent_server.app.guardrails import looks_like_fraud_or_exfil, looks_like_injection, mask_text
+from services.agent_server.app.llm_agent import LLMAdvisor
 from services.agent_server.app.schemas import AgentRequest, AgentResponse, ToolTrace
 from services.agent_server.app.tool_client import ToolClient
 
@@ -36,8 +37,9 @@ def _identifier_payload(req: AgentRequest) -> dict[str, Any] | None:
 
 
 class AgentOrchestrator:
-    def __init__(self, tools: ToolClient):
+    def __init__(self, tools: ToolClient, llm: LLMAdvisor | None = None):
         self.tools = tools
+        self.llm = llm or LLMAdvisor()
 
     def run(self, req: AgentRequest) -> AgentResponse:
         trace: list[ToolTrace] = []
@@ -82,7 +84,20 @@ class AgentOrchestrator:
                 tool_trace=trace,
             )
 
-        reason = req.reason or _infer_reason(message)
+        reason = req.reason
+        if reason is None:
+            reason = self.llm.extract_reason(
+                message,
+                [
+                    "damaged",
+                    "defective",
+                    "wrong_item",
+                    "not_as_described",
+                    "changed_mind",
+                    "late_delivery",
+                ],
+            )
+        reason = reason or _infer_reason(message)
 
         lookup = self.tools.lookup_order(identifier)
         trace.append(ToolTrace(tool_name="lookup_order", request=identifier, response=lookup, status="ok"))
@@ -134,6 +149,15 @@ class AgentOrchestrator:
                 "Thanks for your request. Based on policy, this case is not eligible for refund/return: "
                 f"{eligibility.get('decision_reason', 'Not eligible')}."
             )
+            drafted = self.llm.draft_reply(
+                "deny_refund",
+                {
+                    "reason": reason,
+                    "decision_reason": eligibility.get("decision_reason", "Not eligible"),
+                },
+            )
+            if drafted:
+                customer_reply = drafted
             return AgentResponse(
                 customer_reply=customer_reply,
                 internal_case_summary=(
@@ -147,12 +171,19 @@ class AgentOrchestrator:
 
         missing = eligibility.get("missing_info", [])
         if missing:
-            return AgentResponse(
-                customer_reply=(
+            customer_reply = (
                     "I can continue, but I still need the following information/evidence: "
                     + ", ".join(missing)
                     + "."
-                ),
+                )
+            drafted = self.llm.draft_reply(
+                "request_missing_info",
+                {"reason": reason, "missing_info": missing},
+            )
+            if drafted:
+                customer_reply = drafted
+            return AgentResponse(
+                customer_reply=customer_reply,
                 internal_case_summary=(
                     f"Eligible conditionally; waiting for required evidence. missing={missing} order={order['order_id']}"
                 ),
@@ -181,6 +212,17 @@ class AgentOrchestrator:
             f"Refund amount: {refund['amount']}. "
             f"RMA: {ret['rma_id']}. Label: {label['url']}"
         )
+        drafted = self.llm.draft_reply(
+            "approve_return_and_refund",
+            {
+                "reason": reason,
+                "refund_amount": refund["amount"],
+                "rma_id": ret["rma_id"],
+                "label_url": label["url"],
+            },
+        )
+        if drafted:
+            customer_reply = drafted
         return AgentResponse(
             customer_reply=customer_reply,
             internal_case_summary=(

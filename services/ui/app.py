@@ -14,6 +14,8 @@ STATUS_COLORS = {
     "Awaiting User Choice": "#2a9d8f",
     "Awaiting Evidence": "#f4a261",
     "Refund Pending": "#1d3557",
+    "Return Pending": "#1d3557",
+    "Replacement Pending": "#1d3557",
     "Resolved": "#2b9348",
     "Escalated": "#c44536",
     "Denied": "#6b7280",
@@ -99,6 +101,39 @@ st.markdown(
       margin: 8px 0;
       color: var(--text);
     }
+    .stButton > button {
+      background: #eef4fa !important;
+      color: #111827 !important;
+      border: 1px solid #cfd8e3 !important;
+    }
+    .stButton > button:hover {
+      background: #e4edf7 !important;
+      color: #0f172a !important;
+    }
+    [data-baseweb=\"select\"] > div {
+      background: #f8fbff !important;
+      color: #111827 !important;
+    }
+    .stTextInput input,
+    .stNumberInput input,
+    div[data-baseweb=\"input\"] input,
+    div[data-baseweb=\"textarea\"] textarea,
+    input,
+    textarea {
+      background: #ffffff !important;
+      color: #111827 !important;
+      border: 1px solid #cfd8e3 !important;
+    }
+    .stTextInput input::placeholder,
+    .stNumberInput input::placeholder,
+    textarea::placeholder {
+      color: #475569 !important;
+      opacity: 1 !important;
+    }
+    .stDataFrame, .stDataEditor {
+      background: #ffffff !important;
+      color: #111827 !important;
+    }
     .stTextInput label, .stNumberInput label, .stSelectbox label {
       color: var(--text) !important;
       font-weight: 600;
@@ -106,8 +141,17 @@ st.markdown(
     .stMarkdown, .stCaption, p, span, div {
       color: var(--text);
     }
-    code {
+    code, pre {
       color: #0f172a !important;
+      background: #f1f5f9 !important;
+      border: 1px solid #cfd8e3;
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+    .info-card code {
+      color: #0f172a !important;
+      background: #f8fbff !important;
+      border: 1px solid #cfd8e3 !important;
     }
     </style>
     """,
@@ -139,6 +183,67 @@ with st.sidebar:
         st.session_state["timeline"] = []
         st.session_state["status_chip"] = chat.get("status_chip", "Awaiting User Info")
 
+    resume_session_id = st.text_input("Resume Session ID", key="resume_session_id")
+    if st.button("Resume Session", use_container_width=True):
+        if not resume_session_id.strip():
+            st.error("Enter a valid session id.")
+        else:
+            with httpx.Client(timeout=20.0) as client:
+                resp = client.post(
+                    f"{agent_url.rstrip('/')}/chat/resume",
+                    json={"session_id": resume_session_id.strip()},
+                )
+                resp.raise_for_status()
+                chat = resp.json()
+            st.session_state["session_id"] = chat["session_id"]
+            st.session_state["case_id"] = chat["case_id"]
+            st.session_state["messages"] = chat.get("messages", [])
+            st.session_state["controls"] = chat.get("controls", [])
+            st.session_state["timeline"] = chat.get("timeline", [])
+            st.session_state["status_chip"] = chat.get("status_chip", "Status")
+
+    st.markdown("---")
+    st.subheader("Model Runtime")
+    if st.button("Refresh Model Status", use_container_width=True):
+        try:
+            with httpx.Client(timeout=20.0) as client:
+                resp = client.get(f"{agent_url.rstrip('/')}/chat/model/status")
+                resp.raise_for_status()
+                st.session_state["model_status"] = resp.json()
+        except Exception as exc:
+            st.session_state["model_status_error"] = str(exc)
+
+    if "model_status" not in st.session_state and "model_status_error" not in st.session_state:
+        try:
+            with httpx.Client(timeout=20.0) as client:
+                resp = client.get(f"{agent_url.rstrip('/')}/chat/model/status")
+                resp.raise_for_status()
+                st.session_state["model_status"] = resp.json()
+        except Exception as exc:
+            st.session_state["model_status_error"] = str(exc)
+
+    model_status = st.session_state.get("model_status")
+    model_status_error = st.session_state.get("model_status_error")
+    if model_status:
+        ready = bool(model_status.get("ready"))
+        enabled = bool(model_status.get("enabled"))
+        mode = model_status.get("mode", "N/A")
+        st.markdown(
+            (
+                f"Mode: `{mode}`\n\n"
+                f"Enabled: `{enabled}`\n\n"
+                f"Ready: `{ready}`\n\n"
+                f"Adapter: `{model_status.get('adapter_dir', 'N/A')}`"
+            )
+        )
+        if ready:
+            st.success("Model runtime is ready.")
+        else:
+            missing = model_status.get("missing_artifacts", [])
+            st.warning(f"Model not ready. Missing: {missing if missing else 'unknown'}")
+    elif model_status_error:
+        st.warning(f"Model status unavailable: {model_status_error}")
+
     st.markdown("---")
     st.subheader("Create Test Order")
     test_email = st.text_input("Customer Email", "demo@example.com")
@@ -148,7 +253,7 @@ with st.sidebar:
     test_category = st.selectbox("Category", ["electronics", "fashion", "apparel", "home"])
     test_price = st.number_input("Price", min_value=1.0, value=59.99)
     test_ship = st.number_input("Shipping Fee", min_value=0.0, value=5.0)
-    test_status = st.selectbox("Status", ["processing", "shipped", "delivered"])
+    st.caption("New test orders are always created with status: delivered")
 
     if st.button("Create Test Order", use_container_width=True):
         payload = {
@@ -159,7 +264,6 @@ with st.sidebar:
             "item_category": test_category,
             "price": str(test_price),
             "shipping_fee": str(test_ship),
-            "status": test_status,
             "delivery_date": None,
         }
         try:
@@ -251,6 +355,8 @@ with left:
                         payload["satisfaction"] = opt["value"]
                     elif field == "reason":
                         payload["reason"] = opt["value"]
+                    elif field == "preferred_resolution":
+                        payload["preferred_resolution"] = opt["value"]
                     st.session_state["messages"].append({"role": "user", "content": opt["label"]})
                     send_chat(payload)
                     st.rerun()
@@ -318,3 +424,25 @@ with right:
         st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("No timeline events yet.")
+
+    st.subheader("Orders In System")
+    if st.button("Refresh Orders Table"):
+        with httpx.Client(timeout=20.0) as client:
+            resp = client.get(f"{agent_url.rstrip('/')}/chat/orders", params={"limit": 200})
+            resp.raise_for_status()
+            out = resp.json()
+        st.session_state["orders_table"] = out.get("orders", [])
+
+    orders_table = st.session_state.get("orders_table", [])
+    if orders_table:
+        st.dataframe(pd.DataFrame(orders_table), use_container_width=True, hide_index=True)
+    else:
+        with httpx.Client(timeout=20.0) as client:
+            resp = client.get(f"{agent_url.rstrip('/')}/chat/orders", params={"limit": 200})
+            resp.raise_for_status()
+            out = resp.json()
+        st.session_state["orders_table"] = out.get("orders", [])
+        if st.session_state["orders_table"]:
+            st.dataframe(pd.DataFrame(st.session_state["orders_table"]), use_container_width=True, hide_index=True)
+        else:
+            st.info("No orders available.")
