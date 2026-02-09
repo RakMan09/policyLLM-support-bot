@@ -1,6 +1,6 @@
 # GitHub Setup Guide
 
-Use this guide to publish the project cleanly as `refund-returns-agent`.
+Use this guide to publish the project cleanly as `refund-returns-agent` (product name: ResolveFlow Support Chatbot).
 
 ## 1) Initialize Local Git (if needed)
 

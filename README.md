@@ -1,262 +1,141 @@
-# refund-returns-agent
+# ResolveFlow Support Chatbot
 
-Multi-turn, policy-grounded Refund/Returns chatbot portfolio project.
+`refund-returns-agent` is a production-style portfolio project for a stateful, multi-turn customer-support chatbot that handles refund, return, replacement, cancellation, and escalation workflows end-to-end.
 
-This repo now supports a stateful conversational UX (session-based) and is being expanded checkpoint-by-checkpoint to full end-to-end training/eval/guardrails.
+## What this project does
+- Runs a real guided chat, not a single-shot form.
+- Maintains session state and slot-filling in Postgres.
+- Uses tool/function calling with strict schemas and logging.
+- Applies policy as final authority for decisions and payout amounts.
+- Supports evidence upload and validation for damage-related claims.
+- Includes LLM training pipelines (SFT QLoRA + DPO), eval harnesses, guardrails, and release automation.
 
-## Current Scope (Checkpoint 18 of multi-turn upgrade)
-Implemented conversational flow + evidence pipeline + eval + training data + CI + release prep + portfolio artifacts + release gate + optional live-demo release mode:
-- Postgres-backed chat sessions and state memory
-- Guided chatbot controls (dropdowns, multiselect, buttons, upload placeholder)
-- New interactive tools:
-  - `list_orders(customer_identifier)`
-  - `list_order_items(order_id)`
-  - `set_selected_order(session_id, order_id)`
-  - `set_selected_items(session_id, item_ids)`
-  - `create_test_order(payload)`
-  - `get_case_status(case_id)`
-  - `upload_evidence(session_id, file_metadata+content)`
-  - `get_evidence(case_id)`
-  - `validate_evidence(evidence_id, order_id, item_id)`
-- New chat endpoints:
-  - `POST /chat/start`
-  - `POST /chat/message`
-  - `POST /chat/resume`
-  - `POST /chat/create_test_order`
-- Streamlit chat UI with timeline panel + create-test-order panel + real image upload + model runtime panel
-- Expanded case handling paths:
-  - refund request
-  - return request
-  - replacement request
-  - cancel order (if processing)
-  - missing/wrong item
-  - damaged item requiring evidence
-  - late delivery
-  - no order id fallback via email/phone last4
-- Satisfaction loop with deterministic alternatives:
-  - replacement
-  - store credit
-  - escalation
-- Explicit termination support:
-  - user satisfaction = yes
-  - explicit exit message
-  - terminal waiting states + status check (`status` message)
-- Approach B evidence simulation:
-  - local object storage for uploaded files (`data/evidence/`)
-  - deterministic anomaly/evidence plausibility scoring
-  - optional dataset hooks via `.env` paths:
-    - `APPROACH_B_CATALOG_DIR`
-    - `APPROACH_B_ANOMALY_DIR`
-- New conversational eval harness:
-  - `eval/conversation_eval.py`
-  - reports: task success rate, turns-to-resolution, slot-filling accuracy, evidence handling accuracy
-  - exports chat transcripts for human rating (`eval/results/conversation_transcripts.jsonl`)
-- New multi-turn training dataset builder:
-  - `pipelines/build_conversation_dataset.py`
-  - outputs conversation SFT records + DPO preference pairs
-  - supports evidence-required chat states and guided-control decisions
-- DPO prep now supports mixed pair sources:
-  - baseline policy/tool pairs (`dpo_pairs_train.jsonl`)
-  - conversation preference pairs (`conversation_dpo_pairs_train.jsonl`)
-  - configurable limits per source
-- End-to-end stack smoke script:
-  - `eval/stack_smoke.py` validates health, guided chat, evidence upload, validation, and terminal resolution
-  - wired into CI via `docker-smoke` job
-- Final publish audit:
-  - `scripts/final_audit.py` checks required files, `.env` tracking, and secret-like patterns
-  - output report: `eval/results/final_audit_report.json`
-- Metrics snapshot generator:
-  - `scripts/generate_metrics_snapshot.py` creates `docs/METRICS.md` from latest eval/safety/conversation/audit reports
-- Release bundle generator:
-  - `scripts/build_release_bundle.py` creates `docs/RELEASE_SUMMARY.md` + versioned `dist/release_bundle_*.tar.gz`
-- Release prep automation:
-  - `scripts/release_prep.py` runs final audit + metrics snapshot + release bundle + filled release notes
-- Demo scenarios automation:
-  - `scripts/demo_scenarios.py` runs deterministic multi-turn demos (damaged+evidence, escalation, cancel-processing, session resume)
-  - outputs `eval/results/demo_scenarios.json` for portfolio evidence/screenshots
-- Portfolio report automation:
-  - `scripts/generate_portfolio_report.py` builds `docs/PORTFOLIO_REPORT.md` from latest artifacts/metrics
-- Release manifest automation:
-  - `scripts/generate_manifest.py` builds `dist/release_manifest.json` with file hashes/sizes
-  - integrated into `scripts/release_prep.py`
-- Collaboration/community health files:
-  - `CONTRIBUTING.md`
-  - `SECURITY.md`
-  - `.github/pull_request_template.md`
-  - `.github/ISSUE_TEMPLATE/bug_report.md`
-  - `.github/ISSUE_TEMPLATE/feature_request.md`
-- Ship-ready release gate:
-  - `scripts/ship_ready_gate.py` checks required release artifacts exist and are fresh
-  - also validates `eval/results/demo_scenarios.json` contains required scenarios, including `resume_session`
-  - validates model artifacts semantically: `model_runtime_status` fields present and `model_handoff_report.ok=true`
-  - outputs `eval/results/ship_ready_gate.json`
-- Release prep full mode:
-  - `scripts/release_prep.py --run-demo --agent-url ...` regenerates demo scenarios before packaging
-  - `scripts/release_prep.py --run-demo --run-runtime-smoke --runtime-smoke-require-ready --agent-url ...` adds live runtime handoff smoke and requires it in gate
-  - useful for final demo-first portfolio release refresh
-- LLM runtime readiness probe:
-  - `GET /chat/model/status` reports adapter readiness for local serving handoff after Colab training
-  - controlled by `.env` vars: `AGENT_MODE`, `LLM_MODEL_ID`, `LLM_ADAPTER_DIR`, `LLM_DEVICE`, `LLM_DTYPE`
-  - modes:
-    - `AGENT_MODE=deterministic`: policy/state-machine only, no model inference
-    - `AGENT_MODE=hybrid`: try LLM-assisted reason extraction/reply drafting, fallback safely
-    - `AGENT_MODE=llm`: require LLM inference, fail fast on load/inference errors
-- Model status snapshot automation:
-  - `scripts/generate_model_status_snapshot.py` writes:
-    - `eval/results/model_runtime_status.json`
-    - `docs/MODEL_STATUS.md`
-  - integrated into `scripts/release_prep.py`, metrics snapshot, and ship-ready gating
-- Model handoff verification:
-  - `scripts/verify_model_handoff.py` validates runtime snapshot consistency for release handoff
-  - writes `eval/results/model_handoff_report.json`
-  - integrated into `scripts/release_prep.py` and ship-ready gating
-- Docker compose hardening:
-  - stack can boot even when `.env` is missing (safe defaults + optional env file)
-  - better CI portability for docker-smoke
-- GitHub publishing playbook:
-  - `docs/GITHUB_SETUP.md`
+## Main use cases
+- Refund request
+- Return request
+- Replacement request
+- Cancel order (processing only)
+- Wrong/missing item
+- Damaged item (with evidence requirement)
+- Late delivery
+- No order ID fallback via email or phone-last4
+
+## Tech stack
+- `Python 3.11+`
+- `FastAPI` for tool server and agent server
+- `Postgres` for sessions, cases, orders, evidence metadata, and logs
+- `Streamlit` for multi-turn chat UI
+- `Pydantic` for strict request/response schemas
+- `Transformers + PEFT + TRL` for QLoRA SFT and DPO
+- `Docker Compose` for local orchestration
+- `pytest + ruff` for test/lint quality gates
+- `GitHub Actions` for CI smoke and release-prep checks
 
 ## Architecture
 ```text
-Streamlit Chat UI
-  - chat history
-  - guided controls
-  - test order form
-  - timeline panel
-         |
-         v
+Streamlit UI (chat + guided controls + timeline + test order panel)
+    |
+    v
 Agent Server (FastAPI)
-  - chat state machine (slot-filling foundation)
-  - guardrails
-  - guided next-control decisions
-         |
-         v
+- conversation state machine + slot filling
+- guardrails (injection/fraud/PII/refusal)
+- LLM-assisted advisor modes (deterministic/hybrid/llm)
+    |
+    v
 Tool Server (FastAPI)
-  - order/policy/refund tools
-  - chat session persistence tools
-  - test order creation
-         |
-         v
-Postgres
-  - orders, returns, labels, escalations
-  - chat_sessions, chat_messages
-  - tool_call_logs
+- read/write tools with schema validation
+- idempotent side-effect tools (return, label, replacement, escalation)
+- evidence upload + validation + retrieval
+    |
+    v
+Postgres + local evidence storage
+- sessions, messages, tool traces, orders, status, evidence records
 ```
 
-## Run Locally
+## LLM modes
+Configured via `.env`:
+- `AGENT_MODE=deterministic`: no model inference, pure policy/state machine
+- `AGENT_MODE=hybrid`: LLM-assisted reasoning with deterministic fallback
+- `AGENT_MODE=llm`: strict model path, fails when model is unavailable
+
+Runtime status endpoint:
+- `GET /chat/model/status`
+
+## Run locally
 ```bash
 cd "/Users/raksh/Desktop/Refund Returns Agent"
 cp .env.example .env
-docker compose up --build
+docker compose up -d --build
 ```
 
 Open:
 - UI: `http://localhost:8501`
-- Tool server health: `http://localhost:8001/health`
-- Agent server health: `http://localhost:8002/health`
+- Agent health: `http://localhost:8002/health`
+- Tool health: `http://localhost:8001/health`
 
-## Chat Demo Flow
-1. Start new chat in sidebar.
-2. Provide identifier (order id / email / phone last4).
-3. Select order from dropdown.
-4. Select items from multiselect.
-5. Select reason.
-6. If damaged, upload evidence image; backend stores + validates it before resolution.
-7. Bot resolves or asks follow-up and asks satisfaction.
+## How to use
+1. Start a new chat.
+2. Enter identifier (`order_id`, email, or phone last4).
+3. Select order and item(s) from guided controls.
+4. Choose issue/reason and preferred resolution.
+5. Upload evidence when prompted.
+6. Confirm satisfaction or continue to alternatives/escalation.
+7. Resume any session later with session ID.
 
-## Create Test Order (for demos)
-In UI sidebar, fill “Create Test Order”, submit, then use that customer email/phone to test the chat flow immediately.
+## Built-in test/demo features
+- Create test orders directly from the UI.
+- View live case timeline and status chips.
+- Run scripted end-to-end scenarios:
+```bash
+python3 scripts/demo_scenarios.py --agent-url http://localhost:8002 --output eval/results/demo_scenarios.json
+```
 
-## Data + Training + Evaluation
-Existing data/training/eval scripts remain available:
-- `pipelines/preprocess_text.py`
+## Data, training, and eval
+Datasets used:
+- Olist e-commerce (orders/products/payments/shipping)
+- Customer Support on Twitter (language patterns)
+- TweetSumm (dialog summary supervision)
+- Approach B evidence simulation support (catalog + anomaly dirs via `.env`)
+
+Core scripts:
 - `pipelines/build_dataset.py`
+- `pipelines/build_conversation_dataset.py`
 - `training/sft_train.py`
 - `training/dpo_train.py`
 - `eval/eval_harness.py`
 - `eval/conversation_eval.py`
 - `eval/safety_suite.py`
+- `eval/stack_smoke.py`
 
-Run evals:
-```bash
-python3 eval/eval_harness.py --dataset data/processed/synthetic_cases_test.jsonl --agent-url http://localhost:8002 --limit 200 --output eval/results/eval_report.json
-python3 eval/conversation_eval.py --agent-url http://localhost:8002 --output eval/results/conversation_eval_report.json --transcripts-output eval/results/conversation_transcripts.jsonl
-python3 eval/safety_suite.py --agent-url http://localhost:8002 --output eval/results/safety_report.json
-python3 eval/stack_smoke.py --agent-url http://localhost:8002 --tool-url http://localhost:8001
-python3 scripts/runtime_readiness_smoke.py --agent-url http://localhost:8002 --require-ready --output eval/results/runtime_readiness_smoke.json
-python3 eval/build_human_eval_packet.py --transcripts eval/results/conversation_transcripts.jsonl --sample-size 24 --packet-output eval/results/human_eval_packet.jsonl --sheet-output eval/results/human_eval_sheet.csv --summary-output eval/results/human_eval_packet_summary.json
-```
-
-Build conversation training data:
-```bash
-python3 pipelines/build_conversation_dataset.py \
-  --train-cases data/processed/synthetic_cases_train.jsonl \
-  --val-cases data/processed/synthetic_cases_val.jsonl \
-  --output-sft-train data/processed/conversation_sft_train.jsonl \
-  --output-sft-val data/processed/conversation_sft_val.jsonl \
-  --output-dpo-train data/processed/conversation_dpo_pairs_train.jsonl
-```
-
-Use the generated conversation SFT records in prep:
-```bash
-python3 training/sft_train.py \
-  --prepare-only \
-  --conversation-records-train data/processed/conversation_sft_train.jsonl \
-  --conversation-records-val data/processed/conversation_sft_val.jsonl
-```
-
-Use mixed DPO pair sources in prep:
-```bash
-python3 training/dpo_train.py \
-  --prepare-only \
-  --train-pairs data/processed/dpo_pairs_train.jsonl \
-  --conversation-train-pairs data/processed/conversation_dpo_pairs_train.jsonl \
-  --prepared-train data/processed/dpo_train_prepared.jsonl \
-  --prepared-val data/processed/dpo_val_prepared.jsonl
-```
-
-Convenience make targets:
-```bash
-make build-conversation-data
-make conversation-eval
-make prepare-dpo-mixed
-make stack-smoke
-```
-
-## Quality
+## Quality + release commands
 ```bash
 ruff check .
 pytest -q
+python3 scripts/release_prep.py --repo-root . --output-notes docs/RELEASE_NOTES.md --run-demo --run-runtime-smoke --runtime-smoke-require-ready --agent-url http://localhost:8002
+python3 scripts/ship_ready_gate.py --repo-root . --max-age-hours 168 --require-runtime-smoke --output eval/results/ship_ready_gate.json
 ```
 
-## GitHub + Release
-- CI workflow: `.github/workflows/ci.yml`
-  - includes `release-prep-smoke` job to validate `scripts/release_prep.py` (default ship-ready gate enabled)
-  - asserts `model_runtime_status`, `model_handoff_report`, and gate `ok=true` in CI
-- Release checklist: `docs/RELEASE_CHECKLIST.md`
-- Colab runbook: `docs/COLAB_RUNBOOK.md`
-- GitHub setup guide: `docs/GITHUB_SETUP.md`
-- License: `LICENSE` (MIT)
+## Can this be hosted online?
+Yes. This project can be deployed as a live demo website.
 
-Final audit:
-```bash
-python3 scripts/final_audit.py --output eval/results/final_audit_report.json
-```
+Recommended options:
+1. `Render` or `Railway`: deploy 3 services (agent, tool, UI) + managed Postgres.
+2. `Fly.io`: deploy FastAPI services and Streamlit as separate apps.
+3. `AWS/GCP/Azure`: container services + managed database.
 
-Metrics snapshot:
-```bash
-python3 scripts/generate_metrics_snapshot.py --output docs/METRICS.md
-```
+Deployment notes:
+- Keep `AGENT_MODE=deterministic` for lightweight public demo without GPU.
+- Use `AGENT_MODE=hybrid` with adapter artifacts mounted for richer behavior.
+- Store secrets as platform env vars (never in git).
+- Persist `/data/evidence` with attached volume/object storage.
 
-Release bundle:
-```bash
-python3 scripts/build_release_bundle.py --repo-root . --output-dir dist --release-summary docs/RELEASE_SUMMARY.md
-```
-
-One-command release prep:
-```bash
-python3 scripts/release_prep.py --repo-root . --output-notes docs/RELEASE_NOTES.md
-```
+## Documentation index
+- `/Users/raksh/Desktop/Refund Returns Agent/docs/GITHUB_SETUP.md`
+- `/Users/raksh/Desktop/Refund Returns Agent/docs/COLAB_RUNBOOK.md`
+- `/Users/raksh/Desktop/Refund Returns Agent/docs/RELEASE_CHECKLIST.md`
+- `/Users/raksh/Desktop/Refund Returns Agent/docs/MODEL_STATUS.md`
+- `/Users/raksh/Desktop/Refund Returns Agent/docs/METRICS.md`
+- `/Users/raksh/Desktop/Refund Returns Agent/docs/PORTFOLIO_REPORT.md`
 
 One-command release prep (with live demos):
 ```bash
