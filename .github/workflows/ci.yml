@@ -37,6 +37,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: lint-and-test
+    env:
+      AGENT_MODE: deterministic
 
     steps:
       - name: Checkout

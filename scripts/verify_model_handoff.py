@@ -25,7 +25,10 @@ def evaluate(snapshot: dict[str, Any]) -> dict[str, Any]:
     if enabled and mode in {"hybrid", "llm"} and not ready:
         issues.append("runtime_enabled_but_not_ready")
     if isinstance(missing, list) and missing:
-        issues.append("adapter_artifacts_missing")
+        if mode in {"hybrid", "llm"}:
+            issues.append("adapter_artifacts_missing")
+        else:
+            warnings.append("adapter_artifacts_missing_deterministic_mode")
     if mode == "llm" and load_error:
         issues.append("llm_mode_load_error_present")
     if mode == "hybrid" and load_error:
